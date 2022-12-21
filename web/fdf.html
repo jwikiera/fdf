@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title></title>
+</head>
+<body>
+
+<h1 id="need_js" style="display: none;">You need to enable javascript in order to view this page.</h1>
+
+<h1>Point projection demo</h1>
+<h2>I needed to learn drawing objects in three dimensions for a school 
+project and this is my playground. It is based on the mathematical 
+concepts of projecting points in space onto a plane, which is the 
+screen.</h2>
+
+<h2>The cube on the left is in perspective projection. The cube on the 
+right is in orthogonal projection. For documentation press Ctrl+U.</h2>
+<h2>Use the Left and Right arrow keys to rotate the cubes around their respective y axis.</h2>
+<h2>Use the Up and Down arrow keys to rotate the cubes around their respective x axis.</h2>
+<h2>Use the A and D arrow keys to rotate the cubes around their respective z axis.</h2>
+<h2>You can also use the buttons below.</h2>
+
+<canvas id="canvas" style="border: 2px solid" width="1920" height="1080"></canvas><br>
+
+<script>
+	document.getElementById('need_js').style.display = 'none';
+	let width = 1920;//window.innerWidth; // / 10 * 8;
+	document.getElementById('canvas').width = width;
+	document.getElementById('canvas').height = width / 1920 * 1080;
+</script>
+
+<button id="button_up" style="width: 100px; height: 50px">X +</button>
+<button id="button_down" style="width: 100px; height: 50px">X -</button>
+<br>
+<button id="button_left" style="width: 100px; height: 50px">Y +</button>
+<button id="button_right" style="width: 100px; height: 50px">Y -</button>
+<br>
+<button id="button_a" style="width: 100px; height: 50px">Z +</button>
+<button id="button_d" style="width: 100px; height: 50px">Z -</button>
+<br>
+<h2>The dimensions and the initial y and z coordinates of both cubes are identical.</h2>
+<br>
+<h2 id="rotation_h2">Rotation matrix: [[0.880, 0.330, -0.342], [-0.324, 0.943, 0.078], [0.348, 0.043, 0.936]]</h2>
+
+<script>
+	/* CLASSES */
+
+	/* Class representing a point in three dimensional space */
+	class Vect3d {
+		constructor(x, y, z) {
+			this.x = x;
+			this.y = y;
+			this.z = z;
+		}
+
+		toString() {
+			return ('[' + this.x.toFixed(3) + ', ' + this.y.toFixed(3) + ', ' + this.z.toFixed(3) + ']')
+		}
+	}
+
+	/* Class representing a 3D matrix */
+	class Matrix3d {
+		constructor(v1, v2, v3) {
+			this.v1 = v1;
+			this.v2 = v2;
+			this.v3 = v3;
+		}
+
+		toString() {
+			return ('[' + this.v1 + ', ' + this.v2 + ', ' + this.v3 + ']')
+		}
+	}
+
+	/* Class representing a line in three dimensional space (vector form) */
+	class Line3d {
+		constructor(p1, p2) {
+			// p1 = f (jkl)
+			this.p1 = p1;
+			this.p2 = p2;
+			// g (mno)
+			this.v1 = vec_sub(p2, p1);
+			//console.log("Chief, new line! p1: (" + p1.x + ", " + p1.y + ", " + p1.z + ". direction vector: " + this.v1.x + ", " + this.v1.y + ", " + this.v1.z)
+		}
+	}
+
+	/* Class representing a plane in three dimensional space (vector form) */
+	class Plane3d {
+		constructor(p1, p2, p3) {
+			//p1 = c (abc)
+			this.p1 = p1;
+			this.p2 = p2;
+			this.p3 = p3;
+			// d (def)
+			this.v1 = vec_sub(p2, p1);
+			// e (ghi)
+			this.v2 = vec_sub(p3, p1);
+
+			//console.log("Chief, new plane! p1: (" + p1.x + ", " + p1.y + ", " + p1.z + ". direction vector1: " + this.v1.x + ", " + this.v1.y + ", " + this.v1.z + ", direction vector2: " + this.v2.x + ", " + this.v2.y + ", " + this.v2.z)
+		}
+	}
+
+
+	/* GLOBALS */
+
+	/* The HTML canvas element */
+	var canv = document.getElementById('canvas');
+
+	/* The canvas context */
+	var ctx = canv.getContext('2d');
+
+	/* Distance of the observation point to the origin */
+	var eye_z = 0;
+
+	/* Distance of the screen from the origin */
+	var plane_depth = 200;
+	
+	/* Object representing the screen plane */
+	var screen_plane =  get_screen_plane(canv.width, canv.height, plane_depth);
+
+	/* Rotation matrix */
+	var rotation_matrix = new Matrix3d(new Vect3d(1, 0, 0), new Vect3d(0, 1, 0), new Vect3d(0, 0, 1));
+
+	/* Origin of the rotation */
+	var rotation_center = new Vect3d(0, 0, 0);
+
+	/* Rotation axis enum */
+	const Rotations = {
+		x: 0,
+		y: 1,
+		z: 2
+	}
+
+
+	/* FUNCTIONS */
+	
+	/* Subtracting two vectors */
+	function vec_sub(v1, v2) {
+		return (new Vect3d(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z));
+	}
+
+	/* Adding two vectors */
+	function vec_add(v1, v2) {
+		res = new Vect3d(v2.x + v1.x, v2.y + v1.y, v2.z + v1.z);
+		return (res);
+	}
+
+	/* Multiplying a vector by a number */
+	function vec_scale(v, scalar) {
+		res = new Vect3d(v.x * scalar, v.y * scalar, v.z * scalar);
+		return (res);
+	}
+
+	/* Inverting a vector */
+	function vec_invert(v) {
+		return (vec_scale(v, -1));
+	}
+
+	/* Multiplying a 3D matrix with a 3D vector */
+	function matrix_mult_vec(matrix, vec) {
+		let v1 = vec_scale(matrix.v1, vec.x);
+		let v2 = vec_scale(matrix.v2, vec.y);
+		let v3 = vec_scale(matrix.v3, vec.z);
+		return (vec_add(v1, vec_add(v2, v3)));
+	}
+
+	/* Multiplying two 3D matrices */
+	function matrix_mult(m1, m2) {
+		v1 = new Vect3d(
+			m1.v1.x * m2.v1.x + m1.v2.x * m2.v1.y + m1.v3.x * m2.v1.z,
+			m1.v1.y * m2.v1.x + m1.v2.y * m2.v1.y + m1.v3.y * m2.v1.z,
+			m1.v1.z * m2.v1.x + m1.v2.z * m2.v1.y + m1.v3.z * m2.v1.z);
+
+		v2 = new Vect3d(
+			m1.v1.x * m2.v2.x + m1.v2.x * m2.v2.y + m1.v3.x * m2.v2.z,
+			m1.v1.y * m2.v2.x + m1.v2.y * m2.v2.y + m1.v3.y * m2.v2.z,
+			m1.v1.z * m2.v2.x + m1.v2.z * m2.v2.y + m1.v3.z * m2.v2.z);
+
+		v3 = new Vect3d(
+			m1.v1.x * m2.v3.x + m1.v2.x * m2.v3.y + m1.v3.x * m2.v3.z,
+			m1.v1.y * m2.v3.x + m1.v2.y * m2.v3.y + m1.v3.y * m2.v3.z,
+			m1.v1.z * m2.v3.x + m1.v2.z * m2.v3.y + m1.v3.z * m2.v3.z);
+		return (new Matrix3d(v1, v2, v3));
+	}
+
+	/* Converting degrees to radians */
+	function degree_to_radian(angle) {
+		return (angle * Math.PI / 180);
+	}
+
+	/* Return a rotation matrix for a given angle and axis */
+	function get_rotation_matrix(angle, rotation_axis, is_rad = false) {
+		if (!is_rad) {
+			angle = degree_to_radian(angle);
+		}
+		let v1 = null;
+		let v2 = null;
+		let v3 = null;
+		if (rotation_axis == Rotations.x) {
+			v1 = new Vect3d(1, 0, 0);
+			v2 = new Vect3d(0, Math.cos(angle), Math.sin(angle));
+			v3 = new Vect3d(0, - Math.sin(angle), Math.cos(angle));
+		} else if (rotation_axis == Rotations.y) {
+			
+			v1 = new Vect3d(Math.cos(angle), 0, - Math.sin(angle));
+			v2 = new Vect3d(0, 1, 0);
+			v3 = new Vect3d(Math.sin(angle), 0, Math.cos(angle));
+			
+			/*
+			let dist_from_origin = Math.sqrt();
+
+			v1 = new Vect3d(Math.cos(angle),
+							0,
+							0);
+			v2 = new Vect3d(0,
+							1,
+							0);
+			v3 = new Vect3d(0,
+							0,
+							Math.sin(angle));
+
+			*/
+
+		} else {
+			v1 = new Vect3d(Math.cos(angle), Math.sin(angle), 0);
+			v2 = new Vect3d(-Math.sin(angle), Math.cos(angle), 0);
+			v3 = new Vect3d(0, 0, 1);
+		}
+		return (new Matrix3d(v1, v2, v3));
+	}
+
+	/* Creating a Line3d object from a point and a direction vector */
+	function line_from_point_and_vect(point, vect) {
+		return (new Line3d(point, vec_add(point, vect)));
+	}
+
+	/* Calculating the cross product of two vectors, assuming the unit vectors are of size 1 */
+	function cross(v1, v2) {
+		return (new Vect3d(v1.y * v2.z - v1.z * v2.y, v1.x * v2.z - v1.z * v2.x, v1.x * v2.y - v1.y * v2.x));
+	}
+
+	/* Calculating the determinant of a three variables system of equations */
+	function determinant(v1, v2, v3) {
+		let a = v1.x;
+		let b = v1.y;
+		let c = v1.z;
+		let d = v2.x;
+		let e = v2.y;
+		let f = v2.z;
+		let g = v3.x;
+		let h = v3.y;
+		let i = v3.z;
+		return (a * (e * i - f * h) - d * (b * i - c * h) + g * (b * f - c * e));
+	}
+
+	/* Solving a homogenous three variables equation system */
+	function solve_general(v1, v2, v3, vSol) {
+		let a = v1.x;
+		let b = v1.y;
+		let c = v1.z;
+		let d = v2.x;
+		let e = v2.y;
+		let f = v2.z;
+		let g = v3.x;
+		let h = v3.y;
+		let i = v3.z;
+		let j = vSol.x;
+		let k = vSol.y;
+		let l = vSol.z;
+		let det = determinant(v1, v2, v3);
+		if (det == 0) {
+			return (new Vect3d(0, 0, 0));
+		}
+		x = (j * (e * i - f * h) + k * (f * g - d * i) + l * (d * h - g * e)) / det;
+		y = (j * (h * c - b * i) + k * (a * i - c * g) + l * (b * g - h * a)) / det;
+		z = (j * (b * f - c * e) + k * (a * f - c * d) + l * (a * e - b * d)) / det;
+		return (new Vect3d(x, y, z));
+	}
+
+	/* Calculates the intersection between a line and a plane in space */
+	function intersect(line, plane) {
+		if (determinant(plane.v1, plane.v2, vec_invert(line.v1)) == 0) {
+			console.log("Warning, det is 0!");
+			return (new Vect3d(0, 0, 0));
+		}
+		gen_sol = solve_general(line.v1, vec_invert(plane.v1), vec_invert(plane.v2), vec_sub(plane.p1, line.p1));
+		return (vec_add(plane.p1, vec_add(vec_scale(plane.v1, gen_sol.y), vec_scale(plane.v2, gen_sol.z))));
+	}
+
+	/* Getting a Plane object representing the screen */
+	function get_screen_plane(width, height, spectator_distance) {
+		return (new Plane3d(new Vect3d(0, 0, spectator_distance), new Vect3d(0, -height/2, spectator_distance), new Vect3d(-width/2, -height/2, spectator_distance)))
+	}
+
+	/* Projecting a point on a plane using perspective projection (eye position is Vect3d(canv.width / 2, canv.height / 2, eye_z)) */
+	function point_projection(point, plane) {
+		point = vec_sub(point, rotation_center);
+		point = matrix_mult_vec(rotation_matrix, point);
+		point = vec_add(point, rotation_center);
+		let intersection = intersect(new Line3d(new Vect3d(canv.width / 2, canv.height / 2, eye_z), point), plane);
+		return (intersection);
+	}
+
+	/* Projecting a point on a plane using orthogonal projection */
+	function point_projection_orthogonal(point, plane) {
+		point = vec_sub(point, rotation_center);
+		point = matrix_mult_vec(rotation_matrix, point);
+		point = vec_add(point, rotation_center);
+		let line = line_from_point_and_vect(point, cross(plane.v1, plane.v2));
+		return (intersect(line, plane));
+	}
+
+	/* Helper function to draw a circle */
+	function draw_circle(x, y, radius, color = 'black') {
+		ctx.beginPath();
+		ctx.strokeStyle = color;
+		ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		ctx.stroke();
+		ctx.closePath();
+	}
+
+	/* Helper function to draw a small circle at the location of a given vector (z cooridnate is ignored) */
+	function draw_vect(v, color = 'black') {
+		draw_circle(v.x, v.y, 5, color);
+	}
+
+	/* Helper function to draw a line between two 2D points */
+	function connect_vects(v1, v2, draw_vects = true, color = 'black') {
+		ctx.strokeStyle = color;
+		ctx.lineWidth = 3;
+		ctx.beginPath();
+		ctx.moveTo(v1.x, v1.y);
+		ctx.lineTo(v2.x, v2.y);
+		ctx.stroke();
+		ctx.closePath();
+
+		if (draw_vects) {
+			draw_vect(v1, color);
+			draw_vect(v2, color);
+		}
+	}
+
+	/* Helper function filling the HTML Canvas with a given color */
+	function fill_canvas(color = 'white') {
+		ctx.fillStyle = color;
+		ctx.beginPath();
+		ctx.rect(0, 0, canv.width, canv.height);
+		ctx.fill();
+		ctx.closePath();
+	}
+
+	/* Adds rotation to the global rotation matrix, on the given axis */
+	function add_angle_to_rotation_matrix(angle, rotation_axis, is_rad = false) {
+		rotation_matrix = matrix_mult(rotation_matrix, get_rotation_matrix(angle, rotation_axis, is_rad));
+	}
+
+	/* Drawing a cube in perspective projection */
+	function draw_cube(plane, x, y, z, size, draw_vects = false, color = 'black') {
+		let p1 = new Vect3d(x, y, z);
+		let p2 = new Vect3d(x + size, y, z);
+		let p3 = new Vect3d(x + size, y, z + size);
+		let p4 = new Vect3d(x, y, z + size);
+
+		let p5 = new Vect3d(x, y + size, z);
+		let p6 = new Vect3d(x + size, y + size, z);
+		let p7 = new Vect3d(x + size, y + size, z + size);
+		let p8 = new Vect3d(x, y + size, z + size);
+
+		connect_vects(point_projection(p1, plane), point_projection(p2, plane), false, color);
+		connect_vects(point_projection(p2, plane), point_projection(p3, plane), false, color);
+		connect_vects(point_projection(p3, plane), point_projection(p4, plane), false, color);
+		connect_vects(point_projection(p4, plane), point_projection(p1, plane), false, color);
+		connect_vects(point_projection(p5, plane), point_projection(p6, plane), false, color);
+		connect_vects(point_projection(p6, plane), point_projection(p7, plane), false, color);
+		connect_vects(point_projection(p7, plane), point_projection(p8, plane), false, color);
+		connect_vects(point_projection(p8, plane), point_projection(p5, plane), false, color);
+		connect_vects(point_projection(p1, plane), point_projection(p5, plane), false, color);
+		connect_vects(point_projection(p4, plane), point_projection(p8, plane), false, color);
+		connect_vects(point_projection(p3, plane), point_projection(p7, plane), false, color);
+		connect_vects(point_projection(p2, plane), point_projection(p6, plane), false, color);
+
+		if (draw_vects) {
+			draw_vect(point_projection(p4, plane), 'red');
+			draw_vect(point_projection(p3, plane), 'black');
+			draw_vect(point_projection(p1, plane), 'blue');
+			draw_vect(point_projection(p2, plane), 'pink');
+			draw_vect(point_projection(p8, plane), 'green');
+			draw_vect(point_projection(p7, plane), 'lightblue');
+			draw_vect(point_projection(p5, plane), 'lightgreen');
+			draw_vect(point_projection(p6, plane), 'yellow');
+		}
+	}
+
+	/* Drawing a cube in orthogonal projection */
+	function draw_cube_orthogonal(plane, x, y, z, size, draw_vects = false, color = 'black') {
+		let p1 = new Vect3d(x, y, z);
+		let p2 = new Vect3d(x + size, y, z);
+		let p3 = new Vect3d(x + size, y, z + size);
+		let p4 = new Vect3d(x, y, z + size);
+
+		let p5 = new Vect3d(x, y + size, z);
+		let p6 = new Vect3d(x + size, y + size, z);
+		let p7 = new Vect3d(x + size, y + size, z + size);
+		let p8 = new Vect3d(x, y + size, z + size);
+
+		connect_vects(point_projection_orthogonal(p1, plane), point_projection_orthogonal(p2, plane), false, color);
+		connect_vects(point_projection_orthogonal(p2, plane), point_projection_orthogonal(p3, plane), false, color);
+		connect_vects(point_projection_orthogonal(p3, plane), point_projection_orthogonal(p4, plane), false, color);
+		connect_vects(point_projection_orthogonal(p4, plane), point_projection_orthogonal(p1, plane), false, color);
+		connect_vects(point_projection_orthogonal(p5, plane), point_projection_orthogonal(p6, plane), false, color);
+		connect_vects(point_projection_orthogonal(p6, plane), point_projection_orthogonal(p7, plane), false, color);
+		connect_vects(point_projection_orthogonal(p7, plane), point_projection_orthogonal(p8, plane), false, color);
+		connect_vects(point_projection_orthogonal(p8, plane), point_projection_orthogonal(p5, plane), false, color);
+		connect_vects(point_projection_orthogonal(p1, plane), point_projection_orthogonal(p5, plane), false, color);
+		connect_vects(point_projection_orthogonal(p4, plane), point_projection_orthogonal(p8, plane), false, color);
+		connect_vects(point_projection_orthogonal(p3, plane), point_projection_orthogonal(p7, plane), false, color);
+		connect_vects(point_projection_orthogonal(p2, plane), point_projection_orthogonal(p6, plane), false, color);
+
+		if (draw_vects) {
+			draw_vect(point_projection_orthogonal(p4, plane), 'red');
+			draw_vect(point_projection_orthogonal(p3, plane), 'black');
+			draw_vect(point_projection_orthogonal(p1, plane), 'blue');
+			draw_vect(point_projection_orthogonal(p2, plane), 'pink');
+			draw_vect(point_projection_orthogonal(p8, plane), 'green');
+			draw_vect(point_projection_orthogonal(p7, plane), 'lightblue');
+			draw_vect(point_projection_orthogonal(p5, plane), 'lightgreen');
+			draw_vect(point_projection_orthogonal(p6, plane), 'yellow');
+		}
+	}
+
+
+	/* PLAYGROUND */
+
+	/*let intersection = intersect(new Line3d(new Vect3d(0, 0, 0), new Vect3d(0, 200, 300)), new Plane3d(new Vect3d(0, 0, 200), new Vect3d(0, -540, 200), new Vect3d(-960, -540, 200)));
+	console.log(intersection);*/
+	
+	//console.log(solve_general(new Vect3d(0, 200, 300), new Vect3d(0, 0, 200), new Vect3d(960, 0, 0), new Vect3d(-960, -540, 0)))
+
+	//let line = new Line3d(new Vect3d(0, 0, 0), new Vect3d(0, 200, 300));
+	
+	/*let p1 = new Vect3d(400, 200, 300);
+	let p2 = new Vect3d(500, 200, 300);
+	let p3 = new Vect3d(500, 200, 400);
+	let p4 = new Vect3d(400, 200, 400);
+
+	let p5 = new Vect3d(400, 300, 300);
+	let p6 = new Vect3d(500, 300, 300);
+	let p7 = new Vect3d(500, 300, 400);
+	let p8 = new Vect3d(400, 300, 400);
+	
+	connect_vects(point_projection(p1, screen_plane), point_projection(p2, screen_plane));
+	connect_vects(point_projection(p2, screen_plane), point_projection(p3, screen_plane));
+	connect_vects(point_projection(p3, screen_plane), point_projection(p4, screen_plane));
+	connect_vects(point_projection(p4, screen_plane), point_projection(p1, screen_plane));
+	connect_vects(point_projection(p5, screen_plane), point_projection(p6, screen_plane));
+	connect_vects(point_projection(p6, screen_plane), point_projection(p7, screen_plane));
+	connect_vects(point_projection(p7, screen_plane), point_projection(p8, screen_plane));
+	connect_vects(point_projection(p8, screen_plane), point_projection(p5, screen_plane));
+	connect_vects(point_projection(p1, screen_plane), point_projection(p5, screen_plane));
+	connect_vects(point_projection(p4, screen_plane), point_projection(p8, screen_plane));
+	connect_vects(point_projection(p3, screen_plane), point_projection(p7, screen_plane));
+	connect_vects(point_projection(p2, screen_plane), point_projection(p6, screen_plane));
+	*/
+
+	function draw_the_perspective_cube() {
+		let cube_width = canv.height / 4;
+		let cube_x = canv.width / 5 - cube_width / 2;
+		let cube_y = canv.height / 2 - cube_width / 2;
+		let cube_z = plane_depth + 100;
+
+		let rotation_center_prev = new Vect3d(rotation_center.x, rotation_center.y, rotation_center.z);
+		rotation_center = new Vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
+		draw_cube(screen_plane, cube_x, cube_y, cube_z, cube_width, true);
+		rotation_center = rotation_center_prev;
+	}
+
+	function draw_the_orthogonal_cube() {
+		let cube_width = canv.height / 4;
+		let cube_x = canv.width / 3 * 2 - cube_width / 2;
+		let cube_y = canv.height / 2 - cube_width / 2;
+		let cube_z = plane_depth + 100;
+
+
+		let rotation_center_prev = new Vect3d(rotation_center.x, rotation_center.y, rotation_center.z);
+		rotation_center = new Vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
+		draw_cube_orthogonal(screen_plane, cube_x, cube_y, cube_z, cube_width, true);
+		rotation_center = rotation_center_prev;
+	}
+
+	function draw_things() {
+		fill_canvas('#969595');
+		draw_the_perspective_cube();
+		draw_the_orthogonal_cube();
+
+		document.getElementById("rotation_h2").innerText = 'Rotation matrix: ' + rotation_matrix;
+	}
+
+	
+
+	//draw_cube(screen_plane, 400, 800, plane_depth + 100, 100, true);
+	//draw_cube_orthogonal(screen_plane, 1000, 200, plane_depth + 100, 200, true);
+	
+	//draw_cube(screen_plane, -100, -100, 300, 200, true);
+	//draw_cube(screen_plane, canv.width / 2 - 100, canv.height / 2 - 100, plane_depth + 100, 200, true);
+
+	test_point = new Vect3d(200, 300, plane_depth);
+	test_line = new Line3d(test_point, test_point);
+	console.log(cross(screen_plane.v1, screen_plane.v2));
+
+	//draw_cube(screen_plane, 0, 0, 300, 200, true);
+
+	/* Isometric projection */
+	add_angle_to_rotation_matrix(35.264, Rotations.x);
+	add_angle_to_rotation_matrix(45, Rotations.y);
+
+
+	draw_things();
+
+	document.addEventListener('keydown', (event) => {
+	  var name = event.key;
+	  var code = event.code;
+	  // Alert the key name and key code on keydown
+	  //alert(`Key pressed ${name} \r\n Key code value: ${code}`);
+	  if (event.code == 'ArrowRight') {
+	  	add_angle_to_rotation_matrix(- 5, Rotations.y);
+	  } else if (event.code == 'ArrowLeft') {
+	  	add_angle_to_rotation_matrix(5, Rotations.y);
+	  } else if (event.code == 'ArrowUp') {
+	  	add_angle_to_rotation_matrix(- 5, Rotations.x);
+	  } else if (event.code == 'ArrowDown') {
+	  	add_angle_to_rotation_matrix(5, Rotations.x);
+	  } else if (event.code == 'KeyA') {
+	  	add_angle_to_rotation_matrix(- 5, Rotations.z);
+	  } else if (event.code == 'KeyD') {
+	  	add_angle_to_rotation_matrix(5, Rotations.z);
+	  }
+
+	  draw_things();
+	}, false);
+
+	document.getElementById('button_up').addEventListener("click", function() {
+  		add_angle_to_rotation_matrix(5, Rotations.x);
+  		draw_things();
+	});
+	document.getElementById('button_down').addEventListener("click", function() {
+  		add_angle_to_rotation_matrix(- 5, Rotations.x);
+  		draw_things();
+	});
+	document.getElementById('button_left').addEventListener("click", function() {
+  		add_angle_to_rotation_matrix(- 5, Rotations.y);
+  		draw_things();
+	});
+	document.getElementById('button_right').addEventListener("click", function() {
+  		add_angle_to_rotation_matrix(5, Rotations.y);
+  		draw_things();
+	});
+	document.getElementById('button_a').addEventListener("click", function() {
+  		add_angle_to_rotation_matrix(- 5, Rotations.z);
+  		draw_things();
+	});
+	document.getElementById('button_d').addEventListener("click", function() {
+  		add_angle_to_rotation_matrix(5, Rotations.z);
+  		draw_things();
+	});
+</script>
+
+</body></html>
