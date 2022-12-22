@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vector1.c                                          :+:      :+:    :+:   */
+/*   vector2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,39 +12,28 @@
 
 #include "libft.h"
 
-t_vec3d	*new_vect3d(double x, double y, double z)
+void	add_vec_inplace(t_vec3d *addee, t_vec3d *added)
 {
-	t_vec3d	*res;
-
-	res = malloc(sizeof(*res));
-	if (!res)
-		return (NULL);
-	res->x = x;
-	res->y = y;
-	res->z = z;
-	return (res);
+	addee->x += added->x;
+	addee->y += added->y;
+	addee->z += added->z;
 }
 
-t_vec3d	*vec_add(t_vec3d *v1, t_vec3d *v2)
+void	sub_vec_inplace(t_vec3d *substractee, t_vec3d *substracted)
 {
-	if (v1 == NULL || v2 == NULL)
-		return (NULL);
-	return (new_vect3d(v1->x + v2->x, v1->y + v2->y, v1->z + v2->z));
+	substractee->x -= substracted->x;
+	substractee->y -= substracted->y;
+	substractee->z -= substracted->z;
 }
 
-t_vec3d	*vec_sub(t_vec3d *v1, t_vec3d *v2)
+void	scale_vec_inplace(t_vec3d *v, double scalar)
 {
-	if (v1 == NULL || v2 == NULL)
-		return (NULL);
-	return (new_vect3d(v1->x - v2->x, v1->y - v2->y, v1->z - v2->z));
+	v->x *= scalar;
+	v->y *= scalar;
+	v->z *= scalar;
 }
 
-t_vec3d	*vec_scale(t_vec3d *v, double scalar)
+void	invert_vec_inplace(t_vec3d *v)
 {
-	return (new_vect3d(v->x * scalar, v->y * scalar, v->z * scalar));
-}
-
-t_vec3d	*vec_invert(t_vec3d *v)
-{
-	return (vec_scale(v, -1));
+	scale_vec_inplace(v, -1);
 }

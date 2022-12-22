@@ -38,3 +38,9 @@ float	ft_abs_float(float a)
 	}
 	return (a);
 }
+
+/* Converting degrees to radians */
+double	deg_to_rad(double angle)
+{
+	return (angle * PI / 180);
+}

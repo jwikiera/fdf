@@ -167,17 +167,17 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 
 	/* Multiplying two 3D matrices */
 	function matrix_mult(m1, m2) {
-		v1 = new Vect3d(
+		let v1 = new Vect3d(
 			m1.v1.x * m2.v1.x + m1.v2.x * m2.v1.y + m1.v3.x * m2.v1.z,
 			m1.v1.y * m2.v1.x + m1.v2.y * m2.v1.y + m1.v3.y * m2.v1.z,
 			m1.v1.z * m2.v1.x + m1.v2.z * m2.v1.y + m1.v3.z * m2.v1.z);
 
-		v2 = new Vect3d(
+		let v2 = new Vect3d(
 			m1.v1.x * m2.v2.x + m1.v2.x * m2.v2.y + m1.v3.x * m2.v2.z,
 			m1.v1.y * m2.v2.x + m1.v2.y * m2.v2.y + m1.v3.y * m2.v2.z,
 			m1.v1.z * m2.v2.x + m1.v2.z * m2.v2.y + m1.v3.z * m2.v2.z);
 
-		v3 = new Vect3d(
+		let v3 = new Vect3d(
 			m1.v1.x * m2.v3.x + m1.v2.x * m2.v3.y + m1.v3.x * m2.v3.z,
 			m1.v1.y * m2.v3.x + m1.v2.y * m2.v3.y + m1.v3.y * m2.v3.z,
 			m1.v1.z * m2.v3.x + m1.v2.z * m2.v3.y + m1.v3.z * m2.v3.z);
@@ -242,39 +242,39 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 
 	/* Calculating the determinant of a three variables system of equations */
 	function determinant(v1, v2, v3) {
-		let a = v1.x;
-		let b = v1.y;
-		let c = v1.z;
-		let d = v2.x;
-		let e = v2.y;
-		let f = v2.z;
-		let g = v3.x;
-		let h = v3.y;
-		let i = v3.z;
+		let a = v1.x; //0
+		let b = v1.y; //1
+		let c = v1.z; //2
+		let d = v2.x; //3
+		let e = v2.y; //4
+		let f = v2.z; //5
+		let g = v3.x; //6
+		let h = v3.y; //7
+		let i = v3.z; //8
 		return (a * (e * i - f * h) - d * (b * i - c * h) + g * (b * f - c * e));
 	}
 
 	/* Solving a homogenous three variables equation system */
 	function solve_general(v1, v2, v3, vSol) {
-		let a = v1.x;
-		let b = v1.y;
-		let c = v1.z;
-		let d = v2.x;
-		let e = v2.y;
-		let f = v2.z;
-		let g = v3.x;
-		let h = v3.y;
-		let i = v3.z;
-		let j = vSol.x;
-		let k = vSol.y;
-		let l = vSol.z;
+		let a = v1.x;   //0
+		let b = v1.y;   //1
+		let c = v1.z;   //2
+		let d = v2.x;   //3
+		let e = v2.y;   //4
+		let f = v2.z;   //5
+		let g = v3.x;   //6
+		let h = v3.y;   //7
+		let i = v3.z;   //8
+		let j = vSol.x; //9
+		let k = vSol.y; //10
+		let l = vSol.z; //11
 		let det = determinant(v1, v2, v3);
 		if (det == 0) {
 			return (new Vect3d(0, 0, 0));
 		}
-		x = (j * (e * i - f * h) + k * (f * g - d * i) + l * (d * h - g * e)) / det;
-		y = (j * (h * c - b * i) + k * (a * i - c * g) + l * (b * g - h * a)) / det;
-		z = (j * (b * f - c * e) + k * (a * f - c * d) + l * (a * e - b * d)) / det;
+		let x = (j * (e * i - f * h) + k * (f * g - d * i) + l * (d * h - g * e)) / det;
+		let y = (j * (h * c - b * i) + k * (a * i - c * g) + l * (b * g - h * a)) / det;
+		let z = (j * (b * f - c * e) + k * (a * f - c * d) + l * (a * e - b * d)) / det;
 		return (new Vect3d(x, y, z));
 	}
 

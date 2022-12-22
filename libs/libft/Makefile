@@ -62,7 +62,9 @@ OBJS_GNL			:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJS_GNL_LIST))
 
 MATH_DIR				:= $(SOURCES_DIRECTORY)math/
 SRCS_MATH_LIST			:= math1.c\
-							math2.c
+							math2.c\
+							trig.c\
+							equation.c
 OBJS_MATH_LIST		:= $(patsubst %.c, %.o, $(SRCS_MATH_LIST))
 OBJS_MATH			:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJS_MATH_LIST))
 
@@ -70,7 +72,13 @@ VEC_DIR				:= $(SOURCES_DIRECTORY)vector/
 SRCS_VEC_LIST			:= vector1.c\
 							line.c\
 							plane.c\
-							intersect.c
+							intersect.c\
+							matrix.c\
+							math.c\
+							vector2.c\
+							vector3.c\
+							matrix2.c\
+							rotation_matrix.c
 OBJS_VEC_LIST		:= $(patsubst %.c, %.o, $(SRCS_VEC_LIST))
 OBJS_VEC			:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJS_VEC_LIST))
 

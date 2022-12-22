@@ -58,7 +58,7 @@ void	*mlx_new_window(void *mlx_ptr, int size_x, int size_y, char *title);
 int	mlx_clear_window(void *mlx_ptr, void *win_ptr);
 int	mlx_pixel_put(void *mlx_ptr, void *win_ptr, int x, int y, int color);
 /*
-**  origin for x & y is top left corner of the window
+**  origin for axis_x & y is top left corner of the window
 **  y down is positive
 **  color is 0xAARRGGBB format
 */
@@ -100,7 +100,7 @@ int	mlx_loop (void *mlx_ptr);
 **
 **   expose_hook(void *param);
 **   key_hook(int keycode, void *param);
-**   mouse_hook(int button, int x,int y, void *param);
+**   mouse_hook(int button, int axis_x,int y, void *param);
 **   loop_hook(void *param);
 **
 */

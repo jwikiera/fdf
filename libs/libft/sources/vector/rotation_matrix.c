@@ -1,0 +1,80 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   rotation_matrix.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/20 11:12:16 by jwikiera          #+#    #+#             */
+/*   Updated: 2022/10/20 11:12:18 by jwikiera         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "libft.h"
+
+t_matrix3d	*get_rot_x(double angle)
+{
+	t_matrix3d	*res;
+	t_vec3d		*v1;
+	t_vec3d		*v2;
+	t_vec3d		*v3;
+
+	v1 = new_vect3d(1, 0, 0);
+	v2 = new_vect3d(0, cos_approx(angle), sin_approx(angle));
+	v3 = new_vect3d(0, -sin_approx(angle), cos_approx(angle)));
+	if (!v1 || !v2 || v3)
+		return (free_vectors(v1, v2, v3));
+	res = new_matrix(v1, v2, v3);
+	if (!res)
+		return (free_vectors(v1, v2, v3));
+	return (res);
+}
+
+t_matrix3d	*get_rot_y(double angle)
+{
+	t_matrix3d	*res;
+	t_vec3d		*v1;
+	t_vec3d		*v2;
+	t_vec3d		*v3;
+
+	v1 = new_vect3d(cos_approx(angle), 0, -sin_approx(angle));
+	v2 = new_vect3d(0, 1, 0);
+	v3 = new_vect3d(sin_approx(angle), 0, cos_approx(angle));
+	if (!v1 || !v2 || v3)
+		return (free_vectors(v1, v2, v3));
+	res = new_matrix(v1, v2, v3);
+	if (!res)
+		return (free_vectors(v1, v2, v3));
+	return (res);
+}
+
+t_matrix3d	*get_rot_z(double angle)
+{
+	t_matrix3d	*res;
+	t_vec3d		*v1;
+	t_vec3d		*v2;
+	t_vec3d		*v3;
+
+	v1 = new_vect3d(cos_approx(angle), sin_approx(angle), 0);
+	v2 = new_vect3d(-sin_approx(angle), cos_approx(angle), 0);
+	v3 = new_vect3d(0, 0, 1);
+	if (!v1 || !v2 || v3)
+		return (free_vectors(v1, v2, v3));
+	res = new_matrix(v1, v2, v3);
+	if (!res)
+		return (free_vectors(v1, v2, v3));
+	return (res);
+}
+
+/* Return a rotation matrix for a given angle and axis */
+t_matrix3d	*get_rotation_matrix(double angle, enum e_rotation axis, int is_rad)
+{
+	if (!is_rad)
+		angle = deg_to_rad(angle);
+	if (axis == axis_x)
+		return (get_rot_x(angle));
+	else if (axis == axis_y)
+		return (get_rot_y(angle));
+	else
+		return (get_rot_z(angle));
+}
