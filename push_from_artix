@@ -1,1 +1,0 @@
-GIT_SSH_COMMAND='ssh -i ~/.ssh/theonlyjackgithub -o IdentitiesOnly=yes' git push
