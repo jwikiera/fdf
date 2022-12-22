@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_realloc.c                                       :+:      :+:    :+:   */
+/*   ft_realloc_gnl.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,23 +12,102 @@
 
 #include "libft.h"
 
-void	*ft_realloc(void *src, ssize_t new_len)
+void	*ft_realloc_gnl(void *src, size_t new_len)
 {
 	size_t	i;
 	char	*ptr;
 	char	*res;
 
-	res = malloc(new_len);
+	res = ft_calloc(1, new_len);
 	if (res == NULL)
 	{
 		free(src);
-		return (0);
+		return (NULL);
 	}
 	i = 0;
 	ptr = src;
 	while (i < sizeof(src))
 	{
 		*(res + i) = *(ptr + i);
+		i ++;
+	}
+	free(src);
+	return (res);
+}
+
+int	*ft_realloc_intarr(int *src, size_t arr_size, size_t new_size)
+{
+	size_t	i;
+	int		*res;
+
+	if (new_size <= arr_size)
+	{
+		free(src);
+		return (NULL);
+	}
+	res = ft_calloc(new_size, sizeof(int));
+	if (res == NULL)
+	{
+		free(src);
+		return (NULL);
+	}
+	i = 0;
+	while (i < new_size)
+	{
+		res[i] = src[i];
+		i ++;
+	}
+	free(src);
+	return (res);
+}
+
+int	**ft_realloc_int2darr(int **src, size_t arr_size, size_t new_size)
+{
+	size_t	i;
+	int		**res;
+
+	if (new_size <= arr_size)
+	{
+		// TODO: free the whole table
+		free(src);
+		return (NULL);
+	}
+	res = ft_calloc(new_size, sizeof(int *));
+	if (res == NULL)
+	{
+		free(src);
+		return (NULL);
+	}
+	i = 0;
+	while (i < new_size)
+	{
+		res[i] = src[i];
+		i ++;
+	}
+	free(src);
+	return (res);
+}
+
+char	*ft_realloc_chararr(char *src, size_t arr_size, size_t new_size)
+{
+	size_t	i;
+	char	*res;
+
+	if (new_size <= arr_size)
+	{
+		free(src);
+		return (NULL);
+	}
+	res = ft_calloc(new_size, sizeof(char));
+	if (res == NULL)
+	{
+		free(src);
+		return (NULL);
+	}
+	i = 0;
+	while (i < new_size)
+	{
+		res[i] = src[i];
 		i ++;
 	}
 	free(src);

@@ -144,8 +144,17 @@ int main(int argc, char *argv[])
 	if (!map)
 	{
 		ft_printf("Please pass a valid map file!\n");
-		//return (3);
+		return (3);
 	}
+
+	ft_printf("map:\n");
+	for (int i = 0; i < map->size_x; ++i) {
+		for (int j = 0; j < map->size_y; ++j) {
+			ft_printf("%3d, ", map->map[i][j]);
+		}
+		ft_printf("\n");
+	}
+	ft_printf("\n");
 
 	mlx = mlx_init();
 	img.screen_width = 1920;
