@@ -9,10 +9,12 @@ ifeq ($(UNAME_S),Linux)
   FSANITIZE				:= -fsanitize=address -fsanitize=leak
   FRAMEWORK				:=
   LINUX_LIBS			:= -lXext -lX11
+  LINUX_INCLUDES		:= -I/usr/include
 else
   FSANITIZE				:=
   FRAMEWORK				:= -framework OpenGL -framework AppKit
   LINUX_LIBS			:=
+  LINUX_INCLUDES		:=
 endif
 
 CC						:= cc
@@ -44,7 +46,7 @@ INCLUDE_DIR				:= ./includes/
 
 # lm: default math lib
 LIBRARIES				:= -lmlx -lm -lftprintf -lft -L. -L$(LIBFT_DIRECTORY) -L$(LIBPRINTF_DIRECTORY) -L$(MINILIBX_DIRECTORY) $(FRAMEWORK) $(LINUX_LIBS)
-INCLUDES				:= -I$(LIBFT_HEADERS) -I$(LIBPRINTF_HEADERS) -I$(MINILIBX_HEADERS) -I$(INCLUDE_DIR)
+INCLUDES				:= -I$(LIBFT_HEADERS) -I$(LIBPRINTF_HEADERS) -I$(MINILIBX_HEADERS) -I$(INCLUDE_DIR) $(LINUX_INCLUDES)
 
 SOURCES_DIRECTORY		:= ./sources/
 SOURCES_LIST			:= main.c\
@@ -54,7 +56,8 @@ SOURCES_LIST			:= main.c\
 							mlx_helpers.c\
 							draw_line.c\
 							circle_bresenham.c\
-							vect.c
+							vect.c\
+							draw_cube.c
 SOURCES					:= $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
 
 OBJECTS_DIRECTORY		:= objects/

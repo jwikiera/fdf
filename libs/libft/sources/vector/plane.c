@@ -41,13 +41,13 @@ t_plane3d	*plane_from_points(t_vec3d *p1, t_vec3d *p2, t_vec3d *p3)
 	res->p1 = p1;
 	res->p2 = p2;
 	res->p3 = p3;
-	res->v1 = vec_sub(p3, p1);
+	res->v1 = vec_sub(p2, p1);
 	if (!res->v1)
 	{
 		free_ps(p1, p2, p3);
 		return (NULL);
 	}
-	res->v2 = vec_sub(p2, p1);
+	res->v2 = vec_sub(p3, p1);
 	if (!res->v2)
 	{
 		free_ps(p1, p2, p3);

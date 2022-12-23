@@ -30,7 +30,7 @@ double	cos_approx(double angle)
 
 double	sin_approx(double angle)
 {
-	return (HALFPI - angle);
+	return cos_approx(HALFPI - angle);
 }
 
 double	tan_approx(double angle)

@@ -26,8 +26,10 @@ void	draw_one(t_data *data, const int coords[4], int color)
 	if (coords[0] < coords[2])
 		smallest_y = coords[1];
 	else
+	{
 		a *= -1;
-	smallest_y = coords[3];
+		smallest_y = coords[3];
+	}
 	b = smallest_y - a * ft_min_double(coords[0], coords[2]);
 	i = ft_min_double(coords[0], coords[2]);
 	while (i < ft_max_double(coords[0], coords[2]))
@@ -52,7 +54,7 @@ void	draw_two(t_data *data, const int coords[4], int color, double a)
 	else
 		smallest_x = coords[2];
 	b = smallest_x - a * ft_min_double(coords[1], coords[3]);
-	printf("b: %f\n", b);
+	//printf("b: %f\n", b);
 	i = ft_min_float(coords[1], coords[3]);
 	while (i < ft_max_double(coords[1], coords[3]))
 	{
@@ -75,4 +77,11 @@ void	draw_line(t_data *data, const int coords[4], int color)
 		draw_one(data, coords, color);
 	else
 		draw_two(data, coords, color, a);
+
+	my_mlx_pixel_put(data, coords[0], coords[1], 0x000000FF);
+	my_mlx_pixel_put(data, coords[2], coords[3], 0x000000FF);
+	int cd1[] = {coords[0], coords[1], 5};
+	circle_bres(data, cd1, 0x000000FF);
+	int cd2[] = {coords[2], coords[3], 5};
+	circle_bres(data, cd2, color);
 }

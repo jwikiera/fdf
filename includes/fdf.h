@@ -63,5 +63,9 @@ void	fill_screen(t_data *data, int color);
 void	draw_square(t_data *data, const int square_details[4], int color);
 void	circle_bres(t_data *data, const int circle_details[3], int color);
 void	draw_vect(t_data *data, t_vec3d *vect, int color);
+void	connect_vects(t_data *data, t_vec3d *v1, t_vec3d *v2, int color);
+
+void	draw_cube(t_data *data, t_plane3d *plane, int x, int y, int z, int size, int color, t_screen_info *screen_info);
+void	draw_cube_orthogonal(t_data *data, t_plane3d *plane, int x, int y, int z, int size, int color, t_screen_info *screen_info);
 
 #endif

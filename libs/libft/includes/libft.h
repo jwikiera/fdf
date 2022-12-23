@@ -165,6 +165,10 @@ t_line3d	*line_from_points(t_vec3d *p1, t_vec3d *p2);
 t_vec3d		*line_plane_intersect3d(t_line3d *line, t_plane3d *plane);
 t_line3d	*line_from_point_and_vec(t_vec3d *p, t_vec3d *d);
 
+t_plane3d	*plane_from_points(t_vec3d *p1, t_vec3d *p2, t_vec3d *p3);
+t_plane3d	*plane_from_point_and_vecs(t_vec3d *p, t_vec3d *u, t_vec3d *v);
+void		free_plane3d(t_plane3d *plane3d);
+
 t_vec3d		*new_vect3d(double x, double y, double z);
 void		*free_vectors(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3, t_vec3d *v4);
 t_vec3d		*vec_add(t_vec3d *v1, t_vec3d *v2);

@@ -7,3 +7,5 @@ objects
 fdf
 *.swiftdoc
 *.swiftmodule
+artix_pull
+artix_push
