@@ -64,7 +64,7 @@ t_intarr	*str_to_intarr(char *s)
 		}
 		else
 		{
-			//ft_printf("sizeof(int): %u, sizeof(*(res_->arr)): %u\n", sizeof(int), sizeof(*(res_->arr)));
+			//ft_printf("sizeof(int): %v1, sizeof(*(res_->arr)): %v1\n", sizeof(int), sizeof(*(res_->arr)));
 			res_->arr = ft_realloc_intarr(res_->arr, res_->size, res_->size + 1);
 			res_->arr[res_->size] = ft_atoi(num);
 

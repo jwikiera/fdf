@@ -88,6 +88,10 @@ float		ft_min_float(float a, float b);
 float		ft_max_float(float a, float b);
 float		ft_abs_float(float a);
 
+double		ft_min_double(double a, double b);
+double		ft_max_double(double a, double b);
+double		ft_abs_double(double a);
+
 double		cos_approx(double angle);
 double		sin_approx(double angle);
 double		tan_approx(double angle);
@@ -118,7 +122,7 @@ typedef struct s_line3d
 {
 	t_vec3d	*p1;
 	t_vec3d	*p2;
-	t_vec3d	*d;
+	t_vec3d	*v1;
 }	t_line3d;
 
 typedef struct s_plane3d
@@ -126,19 +130,43 @@ typedef struct s_plane3d
 	t_vec3d	*p1;
 	t_vec3d	*p2;
 	t_vec3d	*p3;
-	t_vec3d	*u;
-	t_vec3d	*v;
+	t_vec3d	*v1;
+	t_vec3d	*v2;
 }	t_plane3d;
+
+typedef struct s_screen_info
+{
+	int			width;
+	int			height;
+	double		eye_z;
+	t_matrix3d	*rotation_matrix;
+	t_vec3d		*rotation_center;
+}	t_screen_info;
+
+t_vec2d		*new_vect2d(double x, double y);
+
+double		determinant(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3);
+t_vec3d		*solve_general(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3,
+				t_vec3d *v_sol);
 
 enum e_rotation {axis_x = 0, axis_y = 1, axis_z = 2};
 t_matrix3d	*get_rotation_matrix(double angle,
+				enum e_rotation axis, int is_rad);
+void		add_angle_to_rotation_matrix(t_matrix3d *matrix, double angle,
 				enum e_rotation axis, int is_rad);
 
 t_matrix3d	*new_matrix(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3);
 void		*free_matrix3d(t_matrix3d *m);
 int			valid_matrix(t_matrix3d *m);
+t_vec3d		*matrix_mult_vec(t_matrix3d *matrix, t_vec3d *vec);
+t_matrix3d	*matrix_mult(t_matrix3d *m1, t_matrix3d *m2);
+
+t_line3d	*line_from_points(t_vec3d *p1, t_vec3d *p2);
+t_vec3d		*line_plane_intersect3d(t_line3d *line, t_plane3d *plane);
+t_line3d	*line_from_point_and_vec(t_vec3d *p, t_vec3d *d);
+
 t_vec3d		*new_vect3d(double x, double y, double z);
-void		*free_vectors(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3);
+void		*free_vectors(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3, t_vec3d *v4);
 t_vec3d		*vec_add(t_vec3d *v1, t_vec3d *v2);
 void		add_vec_inplace(t_vec3d *addee, t_vec3d *added);
 void		sub_vec_inplace(t_vec3d *substractee, t_vec3d *substracted);
@@ -149,5 +177,10 @@ t_vec3d		*vec_invert(t_vec3d *v);
 void		invert_vec_inplace(t_vec3d *v);
 
 t_vec3d		*cross(t_vec3d *v1, t_vec3d *v2);
+
+t_vec3d		*project_perspective(t_vec3d *point, t_plane3d *plane,
+				t_screen_info *screen_info);
+t_vec3d		*project_orthogonal(t_vec3d *point, t_plane3d *plane,
+				t_screen_info *screen_info);
 
 #endif

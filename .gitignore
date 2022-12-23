@@ -5,3 +5,5 @@ objects
 *.dylib
 *.swp
 fdf
+*.swiftdoc
+*.swiftmodule

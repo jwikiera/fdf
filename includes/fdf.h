@@ -47,9 +47,21 @@ typedef struct s_map {
 	int	size_y;
 }	t_map;
 
+/* color */
 t_color	*t_color_from_int(int color);
 t_color	*t_color_from_argb(int a, int r, int g, int b);
 
+/* parsing */
 t_map	*map_from_fd(const char *filename);
+
+/* mlx helpers */
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+
+/* draw helpers */
+void	draw_line(t_data *data, const int coords[4], int color);
+void	fill_screen(t_data *data, int color);
+void	draw_square(t_data *data, const int square_details[4], int color);
+void	circle_bres(t_data *data, const int circle_details[3], int color);
+void	draw_vect(t_data *data, t_vec3d *vect, int color);
 
 #endif

@@ -29,7 +29,8 @@ t_color	*t_color_from_int(int color)
 	res->a = color / 16777216;
 	res->r = (color << 8) / 16777216;
 	res->g = (color << 16) / 16777216;
-	printf("bruh color (%axis_x) << 24: %axis_x\n", color, color << 24);
+
+	//printf("bruh color (%axis_x) << 24: %axis_x\n", color, color << 24);
 	res->b = (color << 24) / 16777216;
 	return (res);
 }

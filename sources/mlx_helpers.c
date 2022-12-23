@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   matrix2.c                                          :+:      :+:    :+:   */
+/*   mlx_helpers.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,11 +10,17 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "fdf.h"
 
-void	*free_matrix3d(t_matrix3d *m)
+void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
-	free_vectors(m->v1, m->v2, m->v3, 0);
-	free(m);
-	return (NULL);
+	char	*dst;
+
+	if (x < 0 || x >= data->screen_width || y < 0 || y >= data->screen_height)
+	{
+		ft_printf("Warning! pixel off screen (%d ; %d)", x, y);
+		return ;
+	}
+	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
+	*(unsigned int*)dst = color;
 }

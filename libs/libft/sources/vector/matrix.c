@@ -25,19 +25,21 @@ t_matrix3d	*new_matrix(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3)
 	return (res);
 }
 
-int valid_matrix(t_matrix3d *m)
+int	valid_matrix(t_matrix3d *m)
 {
 	return (m && m->v1 && m->v2 && m->v3);
 }
 
-void	*free_vectors(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3)
+void	*free_vectors(t_vec3d *v1, t_vec3d *v2, t_vec3d *v3, t_vec3d *v4)
 {
 	if (v1)
 		free(v1);
 	if (v2)
 		free(v2);
-	if (v2)
+	if (v3)
 		free(v3);
+	if (v4)
+		free(v4);
 	return (NULL);
 }
 
@@ -56,13 +58,13 @@ t_vec3d	*matrix_mult_vec(t_matrix3d *matrix, t_vec3d *vec)
 		return (NULL);
 	v2 = vec_scale(matrix->v1, vec->x);
 	if (!v2)
-		return (free_vectors(v1, 0, 0));
+		return (free_vectors(v1, 0, 0, 0));
 	v3 = vec_scale(matrix->v1, vec->x);
 	if (!v3)
-		return (free_vectors(v1, v2, 0));
+		return (free_vectors(v1, v2, 0, 0));
 	res = vec_add(v2, v3);
 	res = vec_add(res, v1);
-	free_vectors(v1, v2, v3);
+	free_vectors(v1, v2, v3, 0);
 	return (res);
 }
 
@@ -74,18 +76,21 @@ t_matrix3d	*matrix_mult(t_matrix3d *m1, t_matrix3d *m2)
 	t_vec3d		*v2;
 	t_vec3d		*v3;
 
-	v1 = new_vect3d(m1->v1->x * m2->v1->x + m1->v2->x * m2->v1->y + m1->v3->x * m2->v1->z,
-					m1->v1->y * m2->v1->x + m1->v2->y * m2->v1->y + m1->v3->y * m2->v1->z,
-					m1->v1->z * m2->v1->x + m1->v2->z * m2->v1->y + m1->v3->z * m2->v1->z);
-	v2 = (m1->v1->x * m2->v2->x + m1->v2->x * m2->v2->y + m1->v3->x * m2->v2->z,
-			m1->v1->y * m2->v2->x + m1->v2->y * m2->v2->y + m1->v3->y * m2->v2->z,
-			m1->v1->z * m2->v2->x + m1->v2->z * m2->v2->y + m1->v3->z * m2->v2->z);
-	v3 = (m1->v1->x * m2->v3->x + m1->v2->x * m2->v3->y + m1->v3->x * m2->v3->z,
-			m1->v1->y * m2->v3->x + m1->v2->y * m2->v3->y + m1->v3->y * m2->v3->z,
-			m1->v1->z * m2->v3->x + m1->v2->z * m2->v3->y + m1->v3->z * m2->v3->z);
+	v1 = new_vect3d(m1->v1->x * m2->v1->x + m1->v2->x * m2->v1->y + m1->v3->x
+			* m2->v1->z, m1->v1->y * m2->v1->x + m1->v2->y * m2->v1->y
+			+ m1->v3->y * m2->v1->z, m1->v1->z * m2->v1->x + m1->v2->z
+			* m2->v1->y + m1->v3->z * m2->v1->z);
+	v2 = new_vect3d(m1->v1->x * m2->v2->x + m1->v2->x * m2->v2->y + m1->v3->x
+			* m2->v2->z, m1->v1->y * m2->v2->x + m1->v2->y * m2->v2->y
+			+ m1->v3->y * m2->v2->z, m1->v1->z * m2->v2->x + m1->v2->z
+			* m2->v2->y + m1->v3->z * m2->v2->z);
+	v3 = new_vect3d(m1->v1->x * m2->v3->x + m1->v2->x * m2->v3->y + m1->v3->x
+			* m2->v3->z, m1->v1->y * m2->v3->x + m1->v2->y * m2->v3->y
+			+ m1->v3->y * m2->v3->z, m1->v1->z * m2->v3->x + m1->v2->z
+			* m2->v3->y + m1->v3->z * m2->v3->z);
 	res = new_matrix(v1, v2, v3);
 	if (!res)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	if (!valid_matrix(res))
 		return (free_matrix3d(res));
 	return (res);

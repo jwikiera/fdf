@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   matrix2.c                                          :+:      :+:    :+:   */
+/*   math3.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -11,10 +11,30 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "float.h"
 
-void	*free_matrix3d(t_matrix3d *m)
+double	ft_min_double(double a, double b)
 {
-	free_vectors(m->v1, m->v2, m->v3, 0);
-	free(m);
-	return (NULL);
+	if (a < b)
+		return (a);
+	return (b);
+}
+
+double	ft_max_double(double a, double b)
+{
+	if (a > b)
+		return (a);
+	return (b);
+}
+
+double	ft_abs_double(double a)
+{
+	if (a < 0)
+	{
+		if (a == DBL_MIN)
+			return (DBL_MAX);
+		else
+			return (a * -1);
+	}
+	return (a);
 }

@@ -74,7 +74,7 @@ void	handle_init(size_t n, t_format *t, size_t *final_len, size_t *prec_len)
 		*prec_len += 2;
 	if (((t->precision + t->flags[2] * 2)) > *final_len)
 		*final_len += *prec_len;
-	if (n >= 0 && (t->flags[3] || t->flags[4]))
+	if (t->flags[3] || t->flags[4])
 		(*final_len)++;
 }
 

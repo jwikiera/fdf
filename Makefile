@@ -1,50 +1,65 @@
 # Note, for the minilibx to be findable, one either needs to have the lib in the same folder as the exec, or add the lib
 # to the path like this: `export DYLD_LIBRARY_PATH=/Users/jwikiera/Projets/fdf/FDF/minilibx_mms_20191025_beta:$DYLD_LIBRARY_PATH`
 
-NAME				:= fdf
+NAME					:= fdf
 
-CC					:= cc
-CFLAGS				:= -Wall -Wextra -Werror -O3 -fno-omit-frame-pointer -g -O0 -fstack-protector-all
-RM					:= rm -f
+UNAME_S					:= $(shell uname -s)
 
-LIB_DIRECTORY		:= ./libs/
+ifeq ($(UNAME_S),Linux)
+  FSANITIZE				:= -fsanitize=address -fsanitize=leak
+  FRAMEWORK				:=
+  LINUX_LIBS			:= -lXext -lX11
+else
+  FSANITIZE				:=
+  FRAMEWORK				:= -framework OpenGL -framework AppKit
+  LINUX_LIBS			:=
+endif
 
-LIBFT				:= $(LIBFT_DIRECTORY)libft.a
-LIBFT_DIRECTORY		:= $(LIB_DIRECTORY)libft/
-LIBFT_HEADERS		:= $(LIBFT_DIRECTORY)includes/
+CC						:= cc
+CFLAGS					:= -Wall -Wextra -Werror -O3 -fno-omit-frame-pointer -g -O0 -fstack-protector-all $(FSANITIZE)
+RM						:= rm -f
 
-LIBPRINTF			:= $(LIBPRINTF_DIRECTORY)libftprintf.a
-LIBPRINTF_DIRECTORY	:= $(LIB_DIRECTORY)libprintf/
-LIBPRINTF_HEADERS	:= $(LIBPRINTF_DIRECTORY)includes/
+LIB_DIRECTORY			:= ./libs/
 
-MINILIBX_DIRECTORY	:= $(LIB_DIRECTORY)minilibx_mms_20191025_beta
-MINILIBX_NAME		:= libmlx.dylib
-MINILIBX			:= $(MINILIBX_DIRECTORY)/$(MINILIBX_NAME)
-MINILIBX_HEADERS	:= $(MINILIBX_DIRECTORY)
+LIBFT					:= $(LIBFT_DIRECTORY)libft.a
+LIBFT_DIRECTORY			:= $(LIB_DIRECTORY)libft/
+LIBFT_HEADERS			:= $(LIBFT_DIRECTORY)includes/
 
-INCLUDE_DIR			:= ./includes/
+LIBPRINTF				:= $(LIBPRINTF_DIRECTORY)libftprintf.a
+LIBPRINTF_DIRECTORY		:= $(LIB_DIRECTORY)libprintf/
+LIBPRINTF_HEADERS		:= $(LIBPRINTF_DIRECTORY)includes/
+
+ifeq ($(UNAME_S),Darwin)
+  MINILIBX_DIRECTORY	:= $(LIB_DIRECTORY)minilibx_mms_20191025_beta
+  MINILIBX_NAME			:= libmlx.dylib
+else
+  MINILIBX_DIRECTORY	:= $(LIB_DIRECTORY)minilibx-linux
+  MINILIBX_NAME			:= libmlx.a
+endif
+
+MINILIBX				:= $(MINILIBX_DIRECTORY)/$(MINILIBX_NAME)
+MINILIBX_HEADERS		:= $(MINILIBX_DIRECTORY)
+
+INCLUDE_DIR				:= ./includes/
 
 # lm: default math lib
-LIBRARIES			:= -lmlx -lm -lft -lftprintf -L$(LIBFT_DIRECTORY) -L$(LIBPRINTF_DIRECTORY) -L$(MINILIBX_DIRECTORY) -framework OpenGL -framework AppKit
-INCLUDES			:= -I$(LIBFT_HEADERS) -I$(LIBPRINTF_HEADERS) -I$(MINILIBX_HEADERS) -I$(INCLUDE_DIR)
+LIBRARIES				:= -lmlx -lm -lftprintf -lft -L. -L$(LIBFT_DIRECTORY) -L$(LIBPRINTF_DIRECTORY) -L$(MINILIBX_DIRECTORY) $(FRAMEWORK) $(LINUX_LIBS)
+INCLUDES				:= -I$(LIBFT_HEADERS) -I$(LIBPRINTF_HEADERS) -I$(MINILIBX_HEADERS) -I$(INCLUDE_DIR)
 
-SOURCES_DIRECTORY	:= ./sources/
-SOURCES_LIST		:= main.c\
-						color.c\
-						parsing.c
-SOURCES				:= $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
+SOURCES_DIRECTORY		:= ./sources/
+SOURCES_LIST			:= main.c\
+							color.c\
+							parsing.c\
+							drawing.c\
+							mlx_helpers.c\
+							draw_line.c\
+							circle_bresenham.c\
+							vect.c
+SOURCES					:= $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
 
-OBJECTS_DIRECTORY	:= objects/
-OBJECTS_LIST		:= $(patsubst %.c, %.o, $(SOURCES_LIST))
-OBJECTS				:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
-
-ifeq ("$(uname -r)", "5.10.104-linuxkit")
-  LBSD				:= -lbsd
-  FSANITIZE			:= -fsanitize=address -fsanitize=leak
-else
-  LBSD				:=
-  FSANITIZE			:=
-endif
+OBJECTS_DIRECTORY		:= objects/
+OBJECTS_LIST			:= $(patsubst %.c, %.o, $(SOURCES_LIST))
+OBJECTS					:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
 
 .PHONY: all clean fclean re docker_build docker_run docker_clean
 
@@ -74,7 +89,7 @@ $(MINILIBX):
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(LIBPRINTF) $(MINILIBX) $(OBJECTS_DIRECTORY) $(OBJECTS)
-	$(CC) $(CFLAGS) $(LIBRARIES) $(INCLUDES) $(OBJECTS) -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJECTS) $(LIBRARIES) $(INCLUDES) -o $(NAME)
 
 clean:
 	@$(MAKE) -sC $(LIBPRINTF_DIRECTORY) clean

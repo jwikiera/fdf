@@ -24,8 +24,8 @@ void	free_plane3d(t_plane3d *plane3d)
 	free(plane3d->p1);
 	free(plane3d->p2);
 	free(plane3d->p3);
-	free(plane3d->u);
-	free(plane3d->v);
+	free(plane3d->v1);
+	free(plane3d->v2);
 	free(plane3d);
 }
 
@@ -41,14 +41,14 @@ t_plane3d	*plane_from_points(t_vec3d *p1, t_vec3d *p2, t_vec3d *p3)
 	res->p1 = p1;
 	res->p2 = p2;
 	res->p3 = p3;
-	res->u = vec_sub(p3, p1);
-	if (!res->u)
+	res->v1 = vec_sub(p3, p1);
+	if (!res->v1)
 	{
 		free_ps(p1, p2, p3);
 		return (NULL);
 	}
-	res->v = vec_sub(p2, p1);
-	if (!res->v)
+	res->v2 = vec_sub(p2, p1);
+	if (!res->v2)
 	{
 		free_ps(p1, p2, p3);
 		return (NULL);
@@ -66,8 +66,8 @@ t_plane3d	*plane_from_point_and_vecs(t_vec3d *p, t_vec3d *u, t_vec3d *v)
 	if (!res)
 		return (NULL);
 	res->p1 = p;
-	res->u = u;
-	res->v = v;
+	res->v1 = u;
+	res->v2 = v;
 	res->p2 = vec_add(p, u);
 	if (!res->p2)
 	{

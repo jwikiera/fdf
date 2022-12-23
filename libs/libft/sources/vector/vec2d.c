@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   matrix2.c                                          :+:      :+:    :+:   */
+/*  vec2d.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,9 +12,14 @@
 
 #include "libft.h"
 
-void	*free_matrix3d(t_matrix3d *m)
+t_vec2d	*new_vect2d(double x, double y)
 {
-	free_vectors(m->v1, m->v2, m->v3, 0);
-	free(m);
-	return (NULL);
+	t_vec2d	*res;
+
+	res = malloc(sizeof(*res));
+	if (!res)
+		return (NULL);
+	res->x = x;
+	res->y = y;
+	return (res);
 }

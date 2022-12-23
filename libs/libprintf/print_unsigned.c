@@ -51,7 +51,7 @@ void	print_unsigned(t_format *t, size_t n)
 	prec_len = t->precision - final_len;
 	if (t->precision > final_len)
 		final_len += prec_len;
-	if (n >= 0 && (t->flags[3] || t->flags[4]))
+	if (t->flags[3] || t->flags[4])
 		final_len ++;
 	if (t->precision == 0 && t->has_precision && n == 0)
 	{

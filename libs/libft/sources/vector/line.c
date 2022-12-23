@@ -16,7 +16,7 @@ void	free_line3d(t_line3d *line3d)
 {
 	free(line3d->p1);
 	free(line3d->p2);
-	free(line3d->d);
+	free(line3d->v1);
 	free(line3d);
 }
 
@@ -31,8 +31,8 @@ t_line3d	*line_from_points(t_vec3d *p1, t_vec3d *p2)
 		return (NULL);
 	res->p1 = p1;
 	res->p2 = p2;
-	res->d = vec_sub(p2, p1);
-	if (!res->d)
+	res->v1 = vec_sub(p2, p1);
+	if (!res->v1)
 	{
 		free(res->p1);
 		free(res->p2);
@@ -51,12 +51,12 @@ t_line3d	*line_from_point_and_vec(t_vec3d *p, t_vec3d *d)
 	if (!res)
 		return (NULL);
 	res->p1 = p;
-	res->d = d;
+	res->v1 = d;
 	res->p2 = vec_add(p, d);
 	if (!res->p2)
 	{
 		free(res->p1);
-		free(res->d);
+		free(res->v1);
 		return (NULL);
 	}
 	return (res);

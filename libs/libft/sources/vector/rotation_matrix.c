@@ -21,12 +21,12 @@ t_matrix3d	*get_rot_x(double angle)
 
 	v1 = new_vect3d(1, 0, 0);
 	v2 = new_vect3d(0, cos_approx(angle), sin_approx(angle));
-	v3 = new_vect3d(0, -sin_approx(angle), cos_approx(angle)));
+	v3 = new_vect3d(0, -sin_approx(angle), cos_approx(angle));
 	if (!v1 || !v2 || v3)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	res = new_matrix(v1, v2, v3);
 	if (!res)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	return (res);
 }
 
@@ -41,10 +41,10 @@ t_matrix3d	*get_rot_y(double angle)
 	v2 = new_vect3d(0, 1, 0);
 	v3 = new_vect3d(sin_approx(angle), 0, cos_approx(angle));
 	if (!v1 || !v2 || v3)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	res = new_matrix(v1, v2, v3);
 	if (!res)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	return (res);
 }
 
@@ -59,10 +59,10 @@ t_matrix3d	*get_rot_z(double angle)
 	v2 = new_vect3d(-sin_approx(angle), cos_approx(angle), 0);
 	v3 = new_vect3d(0, 0, 1);
 	if (!v1 || !v2 || v3)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	res = new_matrix(v1, v2, v3);
 	if (!res)
-		return (free_vectors(v1, v2, v3));
+		return (free_vectors(v1, v2, v3, 0));
 	return (res);
 }
 
@@ -77,4 +77,20 @@ t_matrix3d	*get_rotation_matrix(double angle, enum e_rotation axis, int is_rad)
 		return (get_rot_y(angle));
 	else
 		return (get_rot_z(angle));
+}
+
+void	add_angle_to_rotation_matrix(t_matrix3d *rotation_matrix, double angle,
+					enum e_rotation axis, int is_rad)
+{
+	t_matrix3d	*new_matrix;
+	t_matrix3d	*rot_mat;
+
+	rot_mat = get_rotation_matrix(angle, axis, is_rad);
+	if (!rot_mat)
+		return ;
+	new_matrix = matrix_mult(rotation_matrix, rot_mat);
+	free_matrix3d(rot_mat);
+	if (!new_matrix)
+		return ;
+	rotation_matrix = new_matrix;
 }

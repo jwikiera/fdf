@@ -147,14 +147,14 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 	}
 
 	/* Multiplying a vector by a number */
-	function vec_scale(v, scalar) {
-		res = new Vect3d(v.x * scalar, v.y * scalar, v.z * scalar);
+	function vec_scale(v2, scalar) {
+		res = new Vect3d(v2.x * scalar, v2.y * scalar, v2.z * scalar);
 		return (res);
 	}
 
 	/* Inverting a vector */
-	function vec_invert(v) {
-		return (vec_scale(v, -1));
+	function vec_invert(v2) {
+		return (vec_scale(v2, -1));
 	}
 
 	/* Multiplying a 3D matrix with a 3D vector */
@@ -321,8 +321,8 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 	}
 
 	/* Helper function to draw a small circle at the location of a given vector (z cooridnate is ignored) */
-	function draw_vect(v, color = 'black') {
-		draw_circle(v.x, v.y, 5, color);
+	function draw_vect(v2, color = 'black') {
+		draw_circle(v2.x, v2.y, 5, color);
 	}
 
 	/* Helper function to draw a line between two 2D points */
