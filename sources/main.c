@@ -113,9 +113,11 @@ int main(int argc, char *argv[])
 	t_vec3d *rotation_center_prev = new_vect3d(screen_info.rotation_center->x, screen_info.rotation_center->y, screen_info.rotation_center->z);
 	screen_info.rotation_center = new_vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
 
-	add_angle_to_rotation_matrix(screen_info.rotation_matrix, 90, axis_z, 0);
-	add_angle_to_rotation_matrix(screen_info.rotation_matrix, 35.264, axis_x, 0);
-	add_angle_to_rotation_matrix(screen_info.rotation_matrix, 45, axis_y, 0);
+
+	//add_angle_to_rotation_matrix(screen_info.rotation_matrix, 90, axis_z, 0);
+	//add_angle_to_rotation_matrix(screen_info.rotation_matrix, 90, axis_x, 0);
+	//add_angle_to_rotation_matrix(screen_info.rotation_matrix, 35, axis_x, 0);
+	//add_angle_to_rotation_matrix(screen_info.rotation_matrix, 45, axis_y, 0);
 
 	//draw_cube(&img, screen_plane, cube_x, cube_y, cube_z, cube_width, 0x00000000, &screen_info);
 	//draw_cube_orthogonal(&img, screen_plane, cube_x, cube_y, cube_z, cube_width, 0x00000000, &screen_info);
@@ -129,11 +131,11 @@ int main(int argc, char *argv[])
 	 */
 
 
-	int base_x = 300;
-	int base_y = 100;
-	int size = 40;
+	int size = 5;
+	int base_x = 400 + map->size_x * size / 2;
+	int base_y = 200 + map->size_y * size / 2;
+	int height_mult = 1;//5;
 	int depth = 200;
-	int height_mult = 5;
 
 	rotation_center_prev = new_vect3d(screen_info.rotation_center->x, screen_info.rotation_center->y, screen_info.rotation_center->z);
 	screen_info.rotation_center = new_vect3d(base_x + map->size_x * size / 2, base_y + map->size_y * size / 2, depth);
@@ -145,7 +147,7 @@ int main(int argc, char *argv[])
 			//ft_printf("%3d, ", map->map[i][j]);
 			t_vec3d *pt = new_vect3d(base_x + i * size, base_y + j * size, depth - map->map[i][j] * height_mult);
 			if (previous_point_y)
-				connect_vects(&img, project_orthogonal(previous_point_y, screen_plane, &screen_info), project_orthogonal(pt, screen_plane, &screen_info), 0x00000000);
+				connect_vects(&img, project_perspective(previous_point_y, screen_plane, &screen_info), project_perspective(pt, screen_plane, &screen_info), 0x00000000);
 			previous_point_y = new_vect3d(pt->x, pt->y, pt->z);
 		}
 		//ft_printf("\n");
@@ -158,7 +160,7 @@ int main(int argc, char *argv[])
 			//ft_printf("%3d, ", map->map[i][j]);
 			t_vec3d *pt = new_vect3d(base_x + j * size, base_y + i * size, depth - map->map[j][i] * height_mult);
 			if (previous_point_x)
-				connect_vects(&img, project_orthogonal(previous_point_x, screen_plane, &screen_info), project_orthogonal(pt, screen_plane, &screen_info), 0x00000000);
+				connect_vects(&img, project_perspective(previous_point_x, screen_plane, &screen_info), project_perspective(pt, screen_plane, &screen_info), 0x00000000);
 			previous_point_x = new_vect3d(pt->x, pt->y, pt->z);
 		}
 		//ft_printf("\n");
