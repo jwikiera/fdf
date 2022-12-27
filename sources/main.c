@@ -11,6 +11,7 @@ t_plane3d *get_screen_plane(int width, int height, int spectator_distance) {
 typedef struct	s_vars {
 	void	*mlx;
 	void	*win;
+	void	*img;
 	t_data	*data;
 	t_map	*map;
 }				t_vars;
@@ -33,7 +34,7 @@ void	draw_map(t_data *data, t_map *map, void *mlx, void *mlx_win)
 	for (int i = 0; i < map->size_y; i ++) {
 		for (int j = 0; j < map->size_x; j ++) {
 			//ft_printf("%3d, ", map->map[i][j]);
-			t_vec3d *pt = new_vect3d(base_x + i * size, base_y + j * size, depth + map->map[j][i] * height_mult);
+			t_vec3d *pt = new_vect3d(base_x + i * size, base_y + j * size, depth - map->map[j][i] * height_mult);
 			if (previous_point_y)
 				connect_vects(data, project_orthogonal(previous_point_y, data->screen_info->screen_plane, data->screen_info), project_orthogonal(pt, data->screen_info->screen_plane, data->screen_info), 0x00000000);
 			previous_point_y = new_vect3d(pt->x, pt->y, pt->z);
@@ -46,7 +47,7 @@ void	draw_map(t_data *data, t_map *map, void *mlx, void *mlx_win)
 	for (int i = 0; i < map->size_x; ++i) {
 		for (int j = 0; j < map->size_y; ++j) {
 			//ft_printf("%3d, ", map->map[i][j]);
-			t_vec3d *pt = new_vect3d(base_x + j * size, base_y + i * size, depth + map->map[i][j] * height_mult);
+			t_vec3d *pt = new_vect3d(base_x + j * size, base_y + i * size, depth - map->map[i][j] * height_mult);
 			if (previous_point_x)
 				connect_vects(data, project_orthogonal(previous_point_x, data->screen_info->screen_plane, data->screen_info), project_orthogonal(pt, data->screen_info->screen_plane, data->screen_info), 0x00000000);
 			previous_point_x = new_vect3d(pt->x, pt->y, pt->z);
@@ -79,6 +80,13 @@ int	handle_keypress(int keycode, t_vars *vars)
 		add_angle_to_rotation_matrix(vars->data->screen_info->rotation_matrix, 5, axis_z, 0);
 	draw_map(vars->data, vars->map, vars->mlx, vars->win);
 	return (0);
+}
+
+int destroy(int keycode, t_vars *vars)
+{
+	(void) keycode;
+	mlx_destroy_image(vars->mlx, vars->img);
+	exit(0);
 }
 
 int main(int argc, char *argv[])
@@ -203,9 +211,11 @@ int main(int argc, char *argv[])
 	vars.win = mlx_win;
 	vars.data = &img;
 	vars.map = map;
+	vars.img = img.img;
 	mlx_put_image_to_window(mlx, mlx_win, img.img, 0, 0);
 	//mlx_hook(vars.win, ON_KEYDOWN, 1L<<0, close_win, &vars);
 	mlx_hook(vars.win, ON_KEYDOWN, 1L << 0, handle_keypress, &vars);
+	mlx_hook(vars.win, ON_DESTROY, 0, destroy, &vars);
 	mlx_loop(mlx);
 
 	return (0);

@@ -94,6 +94,8 @@ typedef struct s_map {
 	int rect_size_x;
 	int rect_size_y;
 	int height_mult;
+	int pos_x;
+	int pos_y;
 }	t_map;
 
 /* color */
@@ -107,7 +109,7 @@ t_map	*map_from_fd(const char *filename);
 void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
 
 /* draw helpers */
-void	draw_line(t_data *data, const int coords[4], int color);
+void	draw_line_dda(t_data *data, const int coords[4], int color);
 void	fill_screen(t_data *data, int color);
 void	draw_square(t_data *data, const int square_details[4], int color);
 void	circle_bres(t_data *data, const int circle_details[3], int color);

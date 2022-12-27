@@ -45,8 +45,8 @@ void	draw_square(t_data *data, const int square_details[4], int color)
 		square_details[1] + square_details[3],
 		square_details[0], square_details[1]};
 
-	draw_line(data, line_coords1, color);
-	draw_line(data, line_coords2, color);
-	draw_line(data, line_coords3, color);
-	draw_line(data, line_coords4, color);
+	draw_line_dda(data, line_coords1, color);
+	draw_line_dda(data, line_coords2, color);
+	draw_line_dda(data, line_coords3, color);
+	draw_line_dda(data, line_coords4, color);
 }

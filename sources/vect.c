@@ -23,5 +23,5 @@ void	connect_vects(t_data *data, t_vec3d *v1, t_vec3d *v2, int color)
 {
 	const int line_coords[4] = {v1->x, v1->y, v2->x, v2->y};
 
-	draw_line(data, line_coords, color);
+	draw_line_dda(data, line_coords, color);
 }
