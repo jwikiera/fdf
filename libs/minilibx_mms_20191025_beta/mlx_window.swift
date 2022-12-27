@@ -118,13 +118,13 @@ class WinEvent: NSWindow
 	thepoint = event.locationInWindow
 	button = get_mouse_button(with:event)
 	/// button = event.buttonNumber
-	/// print(" mouse down button \(event.buttonNumber) at location \(thepoint.axis_x) axis_x \(thepoint.y)")
+	/// print(" mouse down button \(event.buttonNumber) at location \(thepoint.x) x \(thepoint.y)")
 	if (eventFuncts[idx] != nil)
 	{
 	  if (t == 0)
-	   { _ = unsafeBitCast(eventFuncts[idx],to:(@convention(c)(Int32, Int32, Int32, UnsafeRawPointer)->Int32).self)(Int32(button), Int32(thepoint.axis_x), Int32(size_y-1-Int(thepoint.y)), eventParams[idx]) }
+	   { _ = unsafeBitCast(eventFuncts[idx],to:(@convention(c)(Int32, Int32, Int32, UnsafeRawPointer)->Int32).self)(Int32(button), Int32(thepoint.x), Int32(size_y-1-Int(thepoint.y)), eventParams[idx]) }
 	  if (t == 1)
-	   { _ = unsafeBitCast(eventFuncts[idx],to:(@convention(c)(Int32, Int32, UnsafeRawPointer)->Int32).self)(Int32(thepoint.axis_x), Int32(size_y-1-Int(thepoint.y)), eventParams[idx]) }
+	   { _ = unsafeBitCast(eventFuncts[idx],to:(@convention(c)(Int32, Int32, UnsafeRawPointer)->Int32).self)(Int32(thepoint.x), Int32(size_y-1-Int(thepoint.y)), eventParams[idx]) }
 	}
   }
 
@@ -154,7 +154,7 @@ class WinEvent: NSWindow
 	if (event.deltaX < -0.2) { button = 7; }
         if (button != 0 && eventFuncts[4] != nil)
         {
-          _ = unsafeBitCast(eventFuncts[4],to:(@convention(c)(Int32, Int32, Int32, UnsafeRawPointer)->Int32).self)(Int32(button), Int32(thepoint.axis_x), Int32(thepoint.y), eventParams[4])
+          _ = unsafeBitCast(eventFuncts[4],to:(@convention(c)(Int32, Int32, Int32, UnsafeRawPointer)->Int32).self)(Int32(button), Int32(thepoint.x), Int32(thepoint.y), eventParams[4])
         }
   } 
 
@@ -216,7 +216,7 @@ public class MlxWin
 
   public init(device d:MTLDevice, width w:Int, height h:Int, title t:String)
   {
-    let rect = CGRect(axis_x: 100, y: 100, width: w, height: h)
+    let rect = CGRect(x: 100, y: 100, width: w, height: h)
     winE = WinEvent(frame: rect)
 
     device = d
@@ -246,10 +246,10 @@ public class MlxWin
 
 /// mtkviewdelegate calls
   public func clearWin()  {  md.clearWin() }
-  public func pixelPut(_ axis_x:Int32, _ y:Int32, _ color:UInt32)  {  md.pixelPut(axis_x, y, color) }
+  public func pixelPut(_ x:Int32, _ y:Int32, _ color:UInt32)  {  md.pixelPut(x, y, color) }
   public func putImageScale(image img:MlxImg, sx srcx:Int32, sy srcy:Int32, sw srcw:Int32, sh srch:Int32, dx posx:Int32, dy posy:Int32, dw dest_w:Int32, dh dest_h:Int32, c color:UInt32) { md.putImageScale(img, srcx, srcy, srcw, srch, posx, posy, dest_w, dest_h, color) }
 ///  	      			  	      	  print("putimagescale \(srcx) \(srcy) \(srcw) \(srch) \(posx) \(posy) \(dest_w) \(dest_h) \(color)") }
-  public func putImage(image img:MlxImg, axis_x posx:Int32, y posy:Int32) { md.putImage(img, posx, posy) }
+  public func putImage(image img:MlxImg, x posx:Int32, y posy:Int32) { md.putImage(img, posx, posy) }
   public func waitForGPU() { md.waitForGPU() }
   public func flushPixels() { md.flushPixels() }
   public func flushImages() { md.flushImages() }
@@ -285,13 +285,13 @@ vertex VertexOut basic_vertex_function(const device VertexIn *vertices [[ buffer
 uint vertexID [[ vertex_id ]])
 {
     VertexOut vOut;
-    float4 start = float4((2.0*uni.dest_pos.axis_x)/(uni.dest_size.axis_x-1.0) - 1.0, 1.0 - (2.0*uni.dest_pos.y)/(uni.dest_size.y-1.0) - (uni.dest_sub.y*2.0)/uni.dest_size.y, 0.0, 0.0);
+    float4 start = float4((2.0*uni.dest_pos.x)/(uni.dest_size.x-1.0) - 1.0, 1.0 - (2.0*uni.dest_pos.y)/(uni.dest_size.y-1.0) - (uni.dest_sub.y*2.0)/uni.dest_size.y, 0.0, 0.0);
  /*   vOut.position = (start + (vertices[vertexID].position + 1.0) * float4(uni.dest_sub, 0.0, 0.0))/float4(uni.dest_size, 1.0, 1.0); */
 
-    vOut.position = float4(start.axis_x+((vertices[vertexID].position.axis_x + 1.0)*uni.dest_sub.axis_x)/(uni.dest_size.axis_x),
+    vOut.position = float4(start.x+((vertices[vertexID].position.x + 1.0)*uni.dest_sub.x)/(uni.dest_size.x),
     		    	   start.y+((vertices[vertexID].position.y + 1.0)*uni.dest_sub.y)/(uni.dest_size.y), 0.0, 1.0);
 
-    vOut.UV = (uni.origin_pos + float2(vertices[vertexID].UV.axis_x, vertices[vertexID].UV.y)*(uni.origin_sub-1.0))/(uni.origin_size-1.0);
+    vOut.UV = (uni.origin_pos + float2(vertices[vertexID].UV.x, vertices[vertexID].UV.y)*(uni.origin_sub-1.0))/(uni.origin_size-1.0);
     vOut.color = uni.color;
     return vOut;
 }
@@ -402,9 +402,9 @@ class MTKVDelegate: NSObject, MTKViewDelegate
 	mview.draw()
   }
 
-  func pixelPut(_ axis_x:Int32, _ y:Int32, _ color:UInt32)
+  func pixelPut(_ x:Int32, _ y:Int32, _ color:UInt32)
   {
-	pixel_image.texture_data[Int(y)*pixel_image.texture_sizeline/4+Int(axis_x)] = color
+	pixel_image.texture_data[Int(y)*pixel_image.texture_sizeline/4+Int(x)] = color
 	pixel_count += 1
 	if (pixel_count >= 200000)
 	{
@@ -433,10 +433,10 @@ class MTKVDelegate: NSObject, MTKViewDelegate
 	  }
   }
 
-  func putImage(_ img:MlxImg, _ axis_x:Int32, _ y:Int32)
+  func putImage(_ img:MlxImg, _ x:Int32, _ y:Int32)
   {
 	putImageScale(img, 0, 0, Int32(img.texture_width), Int32(img.texture_height), 
-			   axis_x, y, Int32(img.texture_width), Int32(img.texture_height),
+			   x, y, Int32(img.texture_width), Int32(img.texture_height),
 			   UInt32(0xFFFFFFFF))
   }
 

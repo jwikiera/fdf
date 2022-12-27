@@ -138,10 +138,10 @@ public func mlx_clear_window_swift(_ mlxptr:UnsafeRawPointer, _ winptr:UnsafeRaw
 
 
 @_cdecl("mlx_pixel_put")
-public func mlx_pixel_put_swift(_ mlxptr:UnsafeRawPointer, _ winptr:UnsafeRawPointer, _ axis_x:Int32, _ y:Int32, _ color:UInt32)
+public func mlx_pixel_put_swift(_ mlxptr:UnsafeRawPointer, _ winptr:UnsafeRawPointer, _ x:Int32, _ y:Int32, _ color:UInt32)
 {
 	let win:MlxWin = _mlx_bridge(ptr:winptr)
-	win.pixelPut(axis_x, y, color)
+	win.pixelPut(x, y, color)
 }
 
 
@@ -173,11 +173,11 @@ public func mlx_get_data_addr_swift(_ imgptr:UnsafeRawPointer, _ bpp:UnsafeMutab
 }
 
 @_cdecl("mlx_put_image_to_window")
-public func mlx_put_image_to_window_swift(_ mlxptr:UnsafeRawPointer, _ winptr:UnsafeRawPointer, _ imgptr:UnsafeRawPointer, _ axis_x:Int32, _ y:Int32) -> Int32
+public func mlx_put_image_to_window_swift(_ mlxptr:UnsafeRawPointer, _ winptr:UnsafeRawPointer, _ imgptr:UnsafeRawPointer, _ x:Int32, _ y:Int32) -> Int32
 {
 	let win:MlxWin = _mlx_bridge(ptr:winptr)
 	let img:MlxImg = _mlx_bridge(ptr:imgptr)
-	win.putImage(image:img, axis_x:axis_x, y:y)
+	win.putImage(image:img, x:x, y:y)
 	return Int32(0)
 }
 
@@ -235,13 +235,13 @@ public func mlx_mouse_show_swift() -> Int32
 
 
 @_cdecl("mlx_mouse_move")
-public func mlx_mouse_move_swift(_ winptr:UnsafeRawPointer, _ axis_x:Int32, _ y:Int32) -> Int32
+public func mlx_mouse_move_swift(_ winptr:UnsafeRawPointer, _ x:Int32, _ y:Int32) -> Int32
 {
 	let win:MlxWin = _mlx_bridge(ptr:winptr)
 	let frame = win.getWinEFrame()
 ///	let sframe = win.getScreenFrame()
 	var pt = CGPoint()
-	pt.axis_x = frame.origin.axis_x + CGFloat(axis_x)
+	pt.x = frame.origin.x + CGFloat(x)
 ///	pt.y = sframe.size.y - frame.size.y - frame.origin.y + 1 + y
 	pt.y = frame.origin.y + frame.size.height - 1.0 - CGFloat(y)
 	CGWarpMouseCursorPosition(pt)
@@ -252,12 +252,12 @@ public func mlx_mouse_move_swift(_ winptr:UnsafeRawPointer, _ axis_x:Int32, _ y:
 
 
 @_cdecl("mlx_mouse_get_pos")
-public func mlx_mouse_get_pos_swift(_ winptr:UnsafeRawPointer, _ axis_x:UnsafeMutablePointer<Int32>, _ y:UnsafeMutablePointer<Int32>) -> Int32
+public func mlx_mouse_get_pos_swift(_ winptr:UnsafeRawPointer, _ x:UnsafeMutablePointer<Int32>, _ y:UnsafeMutablePointer<Int32>) -> Int32
 {
 	let win:MlxWin = _mlx_bridge(ptr:winptr)
 	let frame = win.getWinEFrame()
 	let point = win.getMouseLoc()
-	axis_x.pointee = Int32(point.axis_x)
+	x.pointee = Int32(point.x)
 	y.pointee = Int32(frame.size.height - 1.0 - point.y)
 	return Int32(0)
 }
