@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "math.h"
 
 /* source: http://www.ganssle.com/item/approximations-for-trig-c-code.htm
  * Cos accuracy: 7.3, tan: 8.2, sin: .
@@ -26,11 +27,13 @@ double	cos_approx(double angle)
 
 	return (c1 + angle * angle * (c2 + angle * angle * c3 + angle
 			* angle * (c4 + c5 * angle * angle)));
+	//return cos(angle);
 }
 
 double	sin_approx(double angle)
 {
 	return cos_approx(HALFPI - angle);
+	//return (sin(angle));
 }
 
 double	tan_approx(double angle)

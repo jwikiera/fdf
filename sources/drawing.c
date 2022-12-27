@@ -18,10 +18,10 @@ void	fill_screen(t_data *data, int color)
 	int	j;
 
 	i = 0;
-	while (i < data->screen_width)
+	while (i < data->screen_info->width)
 	{
 		j = 0;
-		while (j < data->screen_height)
+		while (j < data->screen_info->height)
 		{
 			my_mlx_pixel_put(data, i, j, color);
 			j ++;

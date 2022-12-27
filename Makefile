@@ -10,11 +10,13 @@ ifeq ($(UNAME_S),Linux)
   FRAMEWORK				:=
   LINUX_LIBS			:= -lXext -lX11
   LINUX_INCLUDES		:= -I/usr/include
+  OS_FLAG				:= -D LINUX
 else
   FSANITIZE				:=
   FRAMEWORK				:= -framework OpenGL -framework AppKit
   LINUX_LIBS			:=
   LINUX_INCLUDES		:=
+  OS_FLAG				:= -D OSX
 endif
 
 CC						:= cc

@@ -16,7 +16,8 @@ void	my_mlx_pixel_put(t_data *data, int x, int y, int color)
 {
 	char	*dst;
 
-	if (x < 0 || x >= data->screen_width || y < 0 || y >= data->screen_height)
+	if (x < 0 || x >= data->screen_info->width || y < 0
+			|| y >= data->screen_info->height)
 	{
 		//ft_printf("Warning! pixel off screen (%d ; %d)", x, y);
 		return ;

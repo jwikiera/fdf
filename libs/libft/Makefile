@@ -97,9 +97,11 @@ OBJECTS				:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
 
 INCLUDE_DIR			:= ./includes/
 
+GNL_BUFFER_FLAG		:= -D BUFFER_SIZE=1000
+
 INCLUDES			:= -I$(INCLUDE_DIR)
 CC					:= cc
-CFLAGS				:= -Wall -Wextra -Werror -O3 -g -O0 -fstack-protector-all
+CFLAGS				:= -Wall -Wextra -Werror -O3 -g -O0 -fstack-protector-all $(GNL_BUFFER_FLAG)
 RM					:= rm -rf
 
 LIBC				:= ar rc

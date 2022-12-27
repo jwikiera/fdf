@@ -141,6 +141,9 @@ typedef struct s_screen_info
 	double		eye_z;
 	t_matrix3d	*rotation_matrix;
 	t_vec3d		*rotation_center;
+	int			screen_depth;
+	t_plane3d	*screen_plane;
+	int			background_color;
 }	t_screen_info;
 
 t_vec2d		*new_vect2d(double x, double y);
