@@ -14,7 +14,7 @@
 
 #include "stdio.h"
 
-static int	count_words(char const *str, char sep)
+int	count_words(char const *str, char sep)
 {
 	int	i;
 	int	same_word;

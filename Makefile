@@ -59,7 +59,10 @@ SOURCES_LIST			:= main.c\
 							draw_line.c\
 							circle_bresenham.c\
 							vect.c\
-							draw_cube.c
+							draw_cube.c\
+							print_util.c\
+							set_screen_info.c\
+							screen_plane.c
 SOURCES					:= $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
 
 OBJECTS_DIRECTORY		:= objects/

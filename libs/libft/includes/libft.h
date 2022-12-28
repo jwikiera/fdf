@@ -55,6 +55,7 @@ void		ft_putstr_fd(char *s, int fd);
 void		ft_putendl_fd(char *s, int fd);
 void		ft_putnbr_fd(int n, int fd);
 
+/* lists */
 typedef struct s_list
 {
 	void			*content;
@@ -72,6 +73,7 @@ void		ft_lstiter(t_list *lst, void (*f)(void *));
 t_list		*ft_lstmap(t_list *lst, void *(*f)(void *), void (*del)(void *));
 
 /* more own utils */
+int			count_words(char const *str, char sep);
 int			ft_str_startswith(const char *str, const char *needle);
 int			ft_str_endswith(const char *str, const char *needle);
 void		*ft_realloc_gnl(void *src, size_t new_len);
@@ -134,16 +136,25 @@ typedef struct s_plane3d
 	t_vec3d	*v2;
 }	t_plane3d;
 
+enum e_projection {orthogonal = 0, perspective = 1};
+
 typedef struct s_screen_info
 {
-	int			width;
-	int			height;
-	double		eye_z;
-	t_matrix3d	*rotation_matrix;
-	t_vec3d		*rotation_center;
-	int			screen_depth;
-	t_plane3d	*screen_plane;
-	int			background_color;
+	int					width;
+	int					height;
+	double				eye_z;
+	t_matrix3d			*rotation_matrix;
+	t_vec3d				*rotation_center;
+	int 				rotation_speed;
+	int					screen_depth;
+	t_plane3d			*screen_plane;
+	int					background_color;
+	int					pos_x;
+	int 				pos_y;
+	int 				pos_z;
+	int 				mov_speed;
+	int 				zoom_speed;
+	enum e_projection	projection;
 }	t_screen_info;
 
 t_vec2d		*new_vect2d(double x, double y);

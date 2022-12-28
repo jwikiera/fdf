@@ -409,7 +409,7 @@ void	*mlx_png_file_to_image(void *xvar, char *file, int *width, int *height)
     {
       if (fd >= 0)
         close(fd);
-      warnx("Can't map png file '%s'", file);
+      warnx("Can't map_struct png file '%s'", file);
       return ((void *)0);
     }
   if (!(img = mlx_int_parse_png(xvar, ptr, size, width, height)))

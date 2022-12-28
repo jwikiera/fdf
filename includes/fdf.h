@@ -38,6 +38,13 @@
 #  define K_K 107
 #  define K_O 111
 #  define K_L 108
+
+#  define K_NUM_4 0
+#  define K_NUM_6 0
+#  define K_NUM_8 0
+#  define K_NUM_2 0
+#  define K_NUM_MINUS 0
+#  define K_NUM_PLUS 0
 # else
 #  define K_ESC 53
 #  define K_UP 126
@@ -58,6 +65,13 @@
 #  define K_K 40
 #  define K_O 31
 #  define K_L 37
+
+#  define K_NUM_4 86
+#  define K_NUM_6 88
+#  define K_NUM_8 91
+#  define K_NUM_2 84
+#  define K_NUM_MINUS 78
+#  define K_NUM_PLUS 69
 # endif
 
 # include "stdlib.h"
@@ -87,7 +101,7 @@ typedef struct s_color {
 	int	b;
 }	t_color;
 
-typedef struct s_map {
+typedef struct s_map_struct {
 	int	**map;
 	int	size_x;
 	int	size_y;
@@ -96,27 +110,34 @@ typedef struct s_map {
 	int height_mult;
 	int pos_x;
 	int pos_y;
-}	t_map;
+}	t_map_struct;
 
 /* color */
-t_color	*t_color_from_int(int color);
-t_color	*t_color_from_argb(int a, int r, int g, int b);
+t_color			*t_color_from_int(int color);
+t_color			*t_color_from_argb(int a, int r, int g, int b);
 
 /* parsing */
-t_map	*map_from_fd(const char *filename);
+t_map_struct	*map_from_fd(const char *filename);
 
 /* mlx helpers */
-void	my_mlx_pixel_put(t_data *data, int x, int y, int color);
+void			my_mlx_pixel_put(t_data *data, int x, int y, int color);
 
 /* draw helpers */
-void	draw_line_dda(t_data *data, const int coords[4], int color);
-void	fill_screen(t_data *data, int color);
-void	draw_square(t_data *data, const int square_details[4], int color);
-void	circle_bres(t_data *data, const int circle_details[3], int color);
-void	draw_vect(t_data *data, t_vec3d *vect, int color);
-void	connect_vects(t_data *data, t_vec3d *v1, t_vec3d *v2, int color);
+void			draw_line_dda(t_data *data, const int coords[4], int color);
+void			fill_screen(t_data *data, int color);
+void			draw_square(t_data *data, const int square_details[4], int color);
+void			circle_bres(t_data *data, const int circle_details[3], int color);
+void			draw_vect(t_data *data, t_vec3d *vect, int color);
+void			connect_vects(t_data *data, t_vec3d *v1, t_vec3d *v2, int color);
 
-void	draw_cube(t_data *data, t_plane3d *plane, int x, int y, int z, int size, int color);
-void	draw_cube_orthogonal(t_data *data, t_plane3d *plane, int x, int y, int z, int size, int color);
+void			draw_cube(t_data *data, t_plane3d *plane, int x, int y, int z, int size, int color);
+void			draw_cube_orthogonal(t_data *data, t_plane3d *plane, int x, int y, int z, int size, int color);
+
+/* other util */
+void			print_title();
+void			print_map(t_map_struct *map);
+t_plane3d		*get_screen_plane(int width, int height, int spectator_distance);
+t_screen_info	*screen_info_init();
+void			*free_map_gnlstr(t_map_struct *map_struct, char *gnl_str);
 
 #endif
