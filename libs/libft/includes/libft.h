@@ -78,7 +78,7 @@ int			ft_str_startswith(const char *str, const char *needle);
 int			ft_str_endswith(const char *str, const char *needle);
 void		*ft_realloc_gnl(void *src, size_t new_len);
 int			*ft_realloc_intarr(int *src, size_t arr_size, size_t new_size);
-int			**ft_realloc_int2darr(int **src, size_t arr_size, size_t new_size);
+int			**ft_realloc_int2darr(int **src, size_t elem_size, size_t arr_size, size_t new_size);
 char		*ft_realloc_chararr(char *src, size_t arr_size, size_t new_size);
 
 /* math */

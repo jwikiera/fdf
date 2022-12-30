@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "libft.h"
+#include "stdio.h"
 
 void	*ft_realloc_gnl(void *src, size_t new_len)
 {
@@ -61,30 +62,48 @@ int	*ft_realloc_intarr(int *src, size_t arr_size, size_t new_size)
 	return (res);
 }
 
-int	**ft_realloc_int2darr(int **src, size_t arr_size, size_t new_size)
+int	**ft_realloc_int2darr(int **src, size_t elem_size, size_t arr_size, size_t new_size)
 {
 	size_t	i;
+	size_t	j;
 	int		**res;
 
 	if (new_size <= arr_size)
 	{
-		// TODO: free the whole table
+		j = 0;
+		while (j < elem_size)
+		{
+			free(src[j]);
+			j ++;
+		}
 		free(src);
 		return (NULL);
 	}
-	res = ft_calloc(new_size, sizeof(int *));
+	printf("mallocing %zu times %lu\n", new_size, sizeof(*src));
+	res = ft_calloc(new_size, sizeof(*src));
 	if (res == NULL)
 	{
+		j = 0;
+		while (j < elem_size)
+		{
+			free(src[j]);
+			j ++;
+		}
 		free(src);
 		return (NULL);
 	}
 	i = 0;
 	while (i < new_size)
 	{
-		res[i] = src[i];
+		if (i < arr_size)
+			res[i] = src[i];
+		else
+			res[i] = ft_calloc(elem_size, sizeof(**src));
 		i ++;
 	}
 	free(src);
+	//free(res[arr_size]);
+	//printf("hmmm\n");
 	return (res);
 }
 

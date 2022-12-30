@@ -91,6 +91,7 @@ typedef struct s_data {
 	int				line_length;
 	int				endian;
 	t_screen_info	*screen_info;
+	char			*screen_title;
 }	t_data;
 
 typedef struct s_color {
@@ -139,5 +140,6 @@ void			print_map(t_map_struct *map);
 t_plane3d		*get_screen_plane(int width, int height, int spectator_distance);
 t_screen_info	*screen_info_init();
 void			*free_map_gnlstr(t_map_struct *map_struct, char *gnl_str);
+void			free_map_members(t_map_struct *map_struct);
 
 #endif

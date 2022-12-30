@@ -17,7 +17,7 @@ LIBFT		:= ./libft/libft.a
 # OBJS_BONUS	:= ${SRCS_BONUS:.c=.o}
 
 CC			:= cc
-CFLAGS		:= -Wall -Wextra -Werror -g
+CFLAGS		:= -Wall -Wextra -Werror -ggdb
 RM			:= rm -f
 
 LIBC		:= ar rc
