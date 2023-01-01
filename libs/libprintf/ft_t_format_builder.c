@@ -16,7 +16,7 @@ t_format	*build_format(char **str)
 {
 	t_format	*res;
 
-	res = ft_calloc(1, sizeof(*res));
+	res = ft_calloc_(1, sizeof(*res));
 	if (!res)
 		return (0);
 	(*str)++;

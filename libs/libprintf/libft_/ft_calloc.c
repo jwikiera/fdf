@@ -1,25 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstiter.c                                       :+:      :+:    :+:   */
+/*   ft_calloc.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/28 17:42:36 by jwikiera          #+#    #+#             */
-/*   Updated: 2022/10/28 17:42:37 by jwikiera         ###   ########.fr       */
+/*   Created: 2022/10/20 12:42:32 by jwikiera          #+#    #+#             */
+/*   Updated: 2022/10/20 12:42:36 by jwikiera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_.h"
 
-void	ft_lstiter(t_list *lst, void (*f)(void *))
+void	*ft_calloc_(size_t nmemb, size_t size)
 {
-	t_list	*t;
+	void	*res;
+	size_t	max_items;
+	size_t	hmm;
 
-	t = lst;
-	while (t)
+	if (!size)
 	{
-		f(t->content);
-		t = t->next;
+		res = malloc(0);
+		if (!res)
+			return (0);
+		return (res);
 	}
+	hmm = 2147483647;
+	max_items = hmm / size;
+	if (max_items < nmemb)
+		return (0);
+	res = malloc(nmemb * size);
+	if (!res)
+		return (0);
+	ft_bzero_(res, nmemb * size);
+	return (res);
 }

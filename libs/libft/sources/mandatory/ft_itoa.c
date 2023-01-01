@@ -57,7 +57,7 @@ static int	handle_neg(int *n, int *i, char **res)
 	return (1);
 }
 
-static int	my_abs(int a)
+static int	my_abs_(int a)
 {
 	if (a < 0)
 		return (a * -1);
@@ -75,8 +75,8 @@ char	*ft_itoa(int n)
 		return (0);
 	while (i - neg < res_len(n))
 	{
-		res[i] = my_abs((n / my_pow(10,
-						res_len(n) - (i - neg) - 1)) % 10) + '0';
+		res[i] = my_abs_((n / my_pow(10,
+									 res_len(n) - (i - neg) - 1)) % 10) + '0';
 		i ++;
 	}
 	res[i] = 0;

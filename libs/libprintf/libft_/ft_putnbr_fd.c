@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_.h"
 
 static int	res_len(int n)
 {
@@ -54,14 +54,7 @@ static int	handle_neg(int *n, int *i, int fd)
 	return (1);
 }
 
-static int	my_abs(int a)
-{
-	if (a < 0)
-		return (a * -1);
-	return (a);
-}
-
-void	ft_putnbr_fd(int n, int fd)
+void	ft_putnbr_fd_(int n, int fd)
 {
 	int	neg;
 	int	i;
@@ -71,7 +64,7 @@ void	ft_putnbr_fd(int n, int fd)
 	while (i - neg < res_len(n))
 	{
 		temp = (n / my_pow(10, res_len(n) - (i - neg) - 1)) % 10;
-		ft_putchar_fd(my_abs(temp) + '0', fd);
+		ft_putchar_fd_(my_abs_(temp) + '0', fd);
 		i ++;
 	}
 }

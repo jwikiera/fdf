@@ -12,7 +12,7 @@
 
 #include "includes/ft_printf.h"
 
-int	my_abs(int a)
+int	my_abs_(int a)
 {
 	if (a == INT_MIN)
 		return (INT_MAX);

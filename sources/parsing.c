@@ -99,7 +99,7 @@ t_map_struct	*map_from_fd(const char *filename)
 		fd_i[1] = 0;
 		while (fd_i[1] < count_words(gnl_str, ' '))
 		{
-			res->map[res->size_x][fd_i[1]] = 0;//ft_atoi(split_res[fd_i[1]]);
+			res->map[res->size_x][fd_i[1]] = ft_atoi(split_res[fd_i[1]]);
 			fd_i[1] ++;
 		}
 		res->size_x ++;

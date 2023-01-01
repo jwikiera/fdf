@@ -32,7 +32,7 @@ void	handle_format(t_format *tf, va_list *ptr)
 
 void	handle_normal(const char **format_str, int *char_count)
 {
-	ft_putchar_fd(**format_str, 1);
+	ft_putchar_fd_(**format_str, 1);
 	(*char_count)++;
 	(*format_str)++;
 }

@@ -19,27 +19,27 @@ int	cab_(const char *str, char c)
 
 void	print_format(t_format *t)
 {
-	ft_putstr_fd("t_format: \n", 1);
-	ft_putstr_fd("\tflags: ", 1);
+	ft_putstr_fd_("t_format: \n", 1);
+	ft_putstr_fd_("\tflags: ", 1);
 	if (t->flags[0])
-		ft_putstr_fd("'-'", 1);
+		ft_putstr_fd_("'-'", 1);
 	if (t->flags[1])
-		ft_putstr_fd("'0'", 1);
+		ft_putstr_fd_("'0'", 1);
 	if (t->flags[2])
-		ft_putstr_fd("'#'", 1);
+		ft_putstr_fd_("'#'", 1);
 	if (t->flags[3])
-		ft_putstr_fd("' '", 1);
+		ft_putstr_fd_("' '", 1);
 	if (t->flags[4])
-		ft_putstr_fd("'+'", 1);
-	ft_putstr_fd("\n\twidth: ", 1);
+		ft_putstr_fd_("'+'", 1);
+	ft_putstr_fd_("\n\twidth: ", 1);
 	put_size_t_fd(t->width, 1);
-	ft_putstr_fd("\n\tprecision: ", 1);
+	ft_putstr_fd_("\n\tprecision: ", 1);
 	put_size_t_fd(t->precision, 1);
-	ft_putstr_fd("\n\thas precision: ", 1);
+	ft_putstr_fd_("\n\thas precision: ", 1);
 	put_size_t_fd(t->has_precision, 1);
-	ft_putstr_fd("\n\tconversion: ", 1);
-	ft_putchar_fd(t->conversion, 1);
-	ft_putchar_fd('\n', 1);
+	ft_putstr_fd_("\n\tconversion: ", 1);
+	ft_putchar_fd_(t->conversion, 1);
+	ft_putchar_fd_('\n', 1);
 }
 
 void	print_blanks(size_t amount, t_format *t)

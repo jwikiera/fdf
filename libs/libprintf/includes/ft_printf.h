@@ -17,7 +17,7 @@
 # include <limits.h>
 # include <unistd.h>
 # include <stdarg.h>
-# include "../libft/libft.h"
+# include "../libft_/libft_.h"
 
 typedef struct s_format
 {
@@ -55,7 +55,7 @@ void			print_percent(t_format *t);
 int				clamp_int(int min, int max, int val);
 size_t			clamp_size_t(size_t min, size_t max, size_t val);
 size_t			ft_max(size_t a, size_t b);
-size_t			ft_min(size_t a, size_t b);
+size_t			ft_min_(size_t a, size_t b);
 int				int_max(int a, int b);
 int				ft_pow(int a, int b);
 size_t			size_t_pow(size_t a, size_t b);

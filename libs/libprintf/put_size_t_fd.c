@@ -26,7 +26,7 @@ void	put_size_t_fd(size_t n, int fd)
 	{
 		temp = (n / size_t_pow(base,
 					unsigned_num_width_size_t(n, base) - i - 1)) % base;
-		ft_putchar_fd(charset[temp], fd);
+		ft_putchar_fd_(charset[temp], fd);
 		i ++;
 	}
 }

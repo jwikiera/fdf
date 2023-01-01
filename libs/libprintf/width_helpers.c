@@ -14,7 +14,7 @@
 
 int	has_width(const char *str)
 {
-	return (ft_isdigit(*str) || *str == '*');
+	return (ft_isdigit_(*str) || *str == '*');
 }
 
 size_t	get_width_chr_width(const char *str)
@@ -22,9 +22,9 @@ size_t	get_width_chr_width(const char *str)
 	size_t	res;
 
 	res = 0;
-	while (ft_isdigit(*(str + res)))
+	while (ft_isdigit_(*(str + res)))
 	{
-		if (!ft_isdigit(*(str + res)))
+		if (!ft_isdigit_(*(str + res)))
 			return (res - 1);
 		res++;
 	}
@@ -43,7 +43,7 @@ int	get_width_2(t_format *t, char **str)
 	while (++i < get_width_chr_width(*str))
 		temp[i] = (*str)[i];
 	temp[i] = 0;
-	t->width = ft_atoi(temp);
+	t->width = ft_atoi_(temp);
 	free(temp);
 	*str += get_width_chr_width(*str);
 	return (1);

@@ -22,9 +22,9 @@ size_t	get_precision_chr_width(const char *str)
 	size_t	res;
 
 	res = 0;
-	while (ft_isdigit(*(str + res)))
+	while (ft_isdigit_(*(str + res)))
 	{
-		if (!ft_isdigit(*(str + res)))
+		if (!ft_isdigit_(*(str + res)))
 			return (res - 1);
 		res++;
 	}
@@ -44,7 +44,7 @@ int	get_precision2(t_format *t, char **str)
 	while (++i < get_precision_chr_width(*str))
 		temp[i] = (*str)[i];
 	temp[i] = 0;
-	t->precision = ft_atoi(temp);
+	t->precision = ft_atoi_(temp);
 	free(temp);
 	*str += get_precision_chr_width(*str);
 	return (1);
@@ -55,7 +55,7 @@ int	get_precision(t_format *t, char **str)
 	t->has_precision = 1;
 	if (has_precision(*str))
 	{
-		if (!ft_isdigit(*((*str) + 1)))
+		if (!ft_isdigit_(*((*str) + 1)))
 		{
 			t->precision = 0;
 			(*str)++;

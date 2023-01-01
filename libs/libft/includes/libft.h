@@ -178,6 +178,7 @@ t_matrix3d	*matrix_mult(t_matrix3d *m1, t_matrix3d *m2);
 t_line3d	*line_from_points(t_vec3d *p1, t_vec3d *p2);
 t_vec3d		*line_plane_intersect3d(t_line3d *line, t_plane3d *plane);
 t_line3d	*line_from_point_and_vec(t_vec3d *p, t_vec3d *d);
+void		free_line3d(t_line3d *line3d);
 
 t_plane3d	*plane_from_points(t_vec3d *p1, t_vec3d *p2, t_vec3d *p3);
 t_plane3d	*plane_from_point_and_vecs(t_vec3d *p, t_vec3d *u, t_vec3d *v);

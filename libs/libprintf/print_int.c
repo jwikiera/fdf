@@ -45,16 +45,16 @@ static void	part_two(t_format *t, int n, size_t final_len, size_t prec_len)
 		count_put_char('+', t);
 	if (n < 0)
 		count_put_char('-', t);
-	if (t->precision > unsigned_num_width_size_t(my_abs(n), 10))
+	if (t->precision > unsigned_num_width_size_t(my_abs_(n), 10))
 		print_zeroes(prec_len, t);
-	t->chars_printed += (int)signed_width_size_t(my_abs(n), 10);
+	t->chars_printed += (int)signed_width_size_t(my_abs_(n), 10);
 	if (n == INT_MIN)
 	{
-		ft_putnbr_fd(my_abs(n / 10), 1);
-		ft_putchar_fd('8', 1);
+		ft_putnbr_fd_(my_abs_(n / 10), 1);
+		ft_putchar_fd_('8', 1);
 	}
 	else
-		ft_putnbr_fd(my_abs(n), 1);
+		ft_putnbr_fd_(my_abs_(n), 1);
 	print_blanks((t->width) - final_len, t);
 }
 
@@ -70,16 +70,16 @@ static void	part_three(t_format *t, int n, size_t final_len, size_t prec_len)
 		count_put_char('-', t);
 	if (t->flags[1])
 		print_zeroes((t->width) - final_len, t);
-	if (t->precision > unsigned_num_width_size_t(my_abs(n), 10))
+	if (t->precision > unsigned_num_width_size_t(my_abs_(n), 10))
 		print_zeroes(prec_len, t);
-	t->chars_printed += (int)signed_width_size_t(my_abs(n), 10);
+	t->chars_printed += (int)signed_width_size_t(my_abs_(n), 10);
 	if (n == INT_MIN)
 	{
-		ft_putnbr_fd(my_abs(n / 10), 1);
-		ft_putchar_fd('8', 1);
+		ft_putnbr_fd_(my_abs_(n / 10), 1);
+		ft_putchar_fd_('8', 1);
 	}
 	else
-		ft_putnbr_fd(my_abs(n), 1);
+		ft_putnbr_fd_(my_abs_(n), 1);
 }
 
 static void	part_four(t_format *t, int n, size_t prec_len)
@@ -90,16 +90,16 @@ static void	part_four(t_format *t, int n, size_t prec_len)
 		count_put_char('+', t);
 	if (n < 0)
 		count_put_char('-', t);
-	if (t->precision > unsigned_num_width_size_t(my_abs(n), 10))
+	if (t->precision > unsigned_num_width_size_t(my_abs_(n), 10))
 		print_zeroes(prec_len, t);
-	t->chars_printed += (int)signed_width_size_t(my_abs(n), 10);
+	t->chars_printed += (int)signed_width_size_t(my_abs_(n), 10);
 	if (n == INT_MIN)
 	{
-		ft_putnbr_fd(my_abs(n / 10), 1);
-		ft_putchar_fd('8', 1);
+		ft_putnbr_fd_(my_abs_(n / 10), 1);
+		ft_putchar_fd_('8', 1);
 	}
 	else
-		ft_putnbr_fd(my_abs(n), 1);
+		ft_putnbr_fd_(my_abs_(n), 1);
 }
 
 void	print_int(t_format *t, int n)
@@ -109,7 +109,7 @@ void	print_int(t_format *t, int n)
 
 	if (t->has_precision)
 		t->flags[1] = 0;
-	final_len = unsigned_num_width_size_t(my_abs(n), 10);
+	final_len = unsigned_num_width_size_t(my_abs_(n), 10);
 	prec_len = t->precision - final_len;
 	if (t->precision > final_len)
 		final_len += prec_len;

@@ -21,8 +21,8 @@ void	print_str(t_format *t, char *str)
 	if (!str)
 		str = "(null)";
 	if (!t->has_precision)
-		precision = ft_strlen(str);
-	final_str_len = ft_min(precision, ft_strlen(str));
+		precision = ft_strlen_(str);
+	final_str_len = ft_min_(precision, ft_strlen_(str));
 	if ((t->width) > final_str_len)
 	{
 		if (t->flags[0])

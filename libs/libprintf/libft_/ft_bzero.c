@@ -1,30 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstclear.c                                      :+:      :+:    :+:   */
+/*   ft_bzero.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/28 17:26:57 by jwikiera          #+#    #+#             */
-/*   Updated: 2022/10/28 17:26:58 by jwikiera         ###   ########.fr       */
+/*   Created: 2022/10/13 16:28:43 by jwikiera          #+#    #+#             */
+/*   Updated: 2022/10/13 16:28:45 by jwikiera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_.h"
 
-void	ft_lstclear(t_list **lst, void (*del)(void*))
+void	ft_bzero_(void *s, size_t n)
 {
-	t_list	*last;
-	t_list	*last2;
-
-	if (!lst || !*lst)
-		return ;
-	last = *lst;
-	while (last)
-	{
-		last2 = last->next;
-		ft_lstdelone(last, del);
-		last = last2;
-	}
-	*lst = 0;
+	ft_memset_(s, 0, n);
 }

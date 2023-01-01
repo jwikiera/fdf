@@ -14,14 +14,10 @@
 
 t_plane3d	*get_screen_plane(int width, int height, int spectator_distance)
 {
-	t_plane3d	*res;
 	t_vec3d		*p1;
 	t_vec3d		*p2;
 	t_vec3d		*p3;
 
-	res = malloc(sizeof(res));
-	if (!res)
-		return (NULL);
 	p1 = new_vect3d(0, 0, spectator_distance);
 	p2 = new_vect3d(0, -height / 2, spectator_distance);
 	p3 = new_vect3d(-width / 2, -height / 2, spectator_distance);

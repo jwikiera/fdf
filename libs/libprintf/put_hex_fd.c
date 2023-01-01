@@ -25,15 +25,15 @@ void	put_hex_fd(size_t n, int capitalize, int prefix, int fd)
 	capital_charset = "0123456789ABCDEF";
 	i = 0;
 	if (prefix)
-		ft_putstr_fd("0x", fd);
+		ft_putstr_fd_("0x", fd);
 	while (i < unsigned_num_width_size_t(n, base))
 	{
 		temp = (n / size_t_pow(base,
 					unsigned_num_width_size_t(n, base) - i - 1)) % base;
 		if (capitalize)
-			ft_putchar_fd(capital_charset[temp], fd);
+			ft_putchar_fd_(capital_charset[temp], fd);
 		else
-			ft_putchar_fd(charset[temp], fd);
+			ft_putchar_fd_(charset[temp], fd);
 		i ++;
 	}
 }

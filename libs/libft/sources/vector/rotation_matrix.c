@@ -92,5 +92,9 @@ void	add_angle_to_rotation_matrix(t_matrix3d *rotation_matrix, double angle,
 	free_matrix3d(rot_mat);
 	if (!new_matrix)
 		return ;
-	*rotation_matrix = *new_matrix;
+	free_vectors(rotation_matrix->v1, rotation_matrix->v2, rotation_matrix->v3, 0);
+	rotation_matrix->v1 = new_matrix->v1;
+	rotation_matrix->v2 = new_matrix->v2;
+	rotation_matrix->v3 = new_matrix->v3;
+	free(new_matrix);
 }

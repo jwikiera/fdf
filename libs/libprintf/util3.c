@@ -53,12 +53,12 @@ int	int_max(int a, int b)
 
 void	count_put_char(char c, t_format *t)
 {
-	ft_putchar_fd(c, 1);
+	ft_putchar_fd_(c, 1);
 	t->chars_printed ++;
 }
 
 void	count_put_str(char *str, t_format *t)
 {
-	t->chars_printed += (int)ft_strlen(str);
-	ft_putstr_fd(str, 1);
+	t->chars_printed += (int)ft_strlen_(str);
+	ft_putstr_fd_(str, 1);
 }

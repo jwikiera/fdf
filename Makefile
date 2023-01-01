@@ -20,7 +20,7 @@ else
 endif
 
 CC						:= cc
-CFLAGS					:= -Wall -Wextra -Werror -O3 -fno-omit-frame-pointer -ggdb -O0 -fstack-protector-all $(FSANITIZE)
+CFLAGS					:= -Wall -Wextra -Werror -O3 -fno-omit-frame-pointer -ggdb -O0 -fstack-protector-all $(FSANITIZE) $(OS_FLAG)
 RM						:= rm -f
 
 LIB_DIRECTORY			:= ./libs/

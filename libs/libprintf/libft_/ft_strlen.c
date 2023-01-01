@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_lstnew.c                                        :+:      :+:    :+:   */
+/*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
+/*   By: jwikiera <jwikiera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/27 16:28:23 by jwikiera          #+#    #+#             */
-/*   Updated: 2022/10/27 16:28:24 by jwikiera         ###   ########.fr       */
+/*   Created: 2022/10/11 12:50:27 by jwikiera          #+#    #+#             */
+/*   Updated: 2022/10/11 16:19:21 by jwikiera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_.h"
 
-t_list	*ft_lstnew(void *content)
+size_t	ft_strlen_(const char *s)
 {
-	t_list	*res;
+	size_t	i;
 
-	res = malloc(sizeof(t_list));
-	if (!res)
-		return (0);
-	res->content = content;
-	res->next = 0;
-	return (res);
+	i = 0;
+	while (s[0])
+	{
+		s ++;
+		i ++;
+	}
+	return (i);
 }

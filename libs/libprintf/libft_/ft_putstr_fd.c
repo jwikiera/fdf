@@ -1,28 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memset.c                                        :+:      :+:    :+:   */
+/*   ft_putstr_fd.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/10/12 15:56:12 by jwikiera          #+#    #+#             */
-/*   Updated: 2022/10/12 15:56:13 by jwikiera         ###   ########.fr       */
+/*   Created: 2022/10/27 16:01:56 by jwikiera          #+#    #+#             */
+/*   Updated: 2022/10/27 16:01:57 by jwikiera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "libft_.h"
 
-void	*ft_memset(void *s, int c, size_t n)
+void	ft_putstr_fd_(char *s, int fd)
 {
-	unsigned int	i;
-	char			*char_pointer;
-
-	char_pointer = s;
-	i = 0;
-	while (i < n)
-	{
-		*(char_pointer + i) = c;
-		i ++;
-	}
-	return (s);
+	write(fd, s, ft_strlen_(s));
 }
