@@ -13,7 +13,7 @@
 #include "libft.h"
 
 t_vec3d	*apply_rotation_matrix_to_point(t_vec3d *point,
-										   t_screen_info *screen_info)
+	t_screen_info *screen_info)
 {
 	t_vec3d		*pt;
 	t_vec3d		*pt2;

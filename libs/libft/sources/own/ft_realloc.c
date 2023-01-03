@@ -61,12 +61,43 @@ int	*ft_realloc_intarr(int *src, size_t arr_size, size_t new_size)
 	return (res);
 }
 
-int	**ft_realloc_int2darr(int **src, size_t elem_size, size_t arr_size, size_t new_size)
+int	**fr_realloc_int2darr_part_two(int **src, int **res, const size_t sizes[3])
 {
 	size_t	i;
 	size_t	j;
-	int		**res;
 
+	res = ft_calloc(sizes[2], sizeof(*src));
+	if (res == NULL)
+	{
+		j = 0;
+		while (j < sizes[0])
+		{
+			free(src[j]);
+			j ++;
+		}
+		free(src);
+		return (NULL);
+	}
+	i = 0;
+	while (i < sizes[2])
+	{
+		if (i < sizes[1])
+			res[i] = src[i];
+		else
+			res[i] = ft_calloc(sizes[0], sizeof(**src));
+		i ++;
+	}
+	return (res);
+}
+
+int	**ft_realloc_int2darr(int **src, size_t elem_size,
+			size_t arr_size, size_t new_size)
+{
+	size_t			j;
+	int				**res;
+	const size_t	sizes[3] = {elem_size, arr_size, new_size};
+
+	res = 0;
 	if (new_size <= arr_size)
 	{
 		j = 0;
@@ -78,27 +109,7 @@ int	**ft_realloc_int2darr(int **src, size_t elem_size, size_t arr_size, size_t n
 		free(src);
 		return (NULL);
 	}
-	res = ft_calloc(new_size, sizeof(*src));
-	if (res == NULL)
-	{
-		j = 0;
-		while (j < elem_size)
-		{
-			free(src[j]);
-			j ++;
-		}
-		free(src);
-		return (NULL);
-	}
-	i = 0;
-	while (i < new_size)
-	{
-		if (i < arr_size)
-			res[i] = src[i];
-		else
-			res[i] = ft_calloc(elem_size, sizeof(**src));
-		i ++;
-	}
+	res = fr_realloc_int2darr_part_two(src, res, sizes);
 	free(src);
 	return (res);
 }

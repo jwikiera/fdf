@@ -62,7 +62,6 @@ t_vec3d	*matrix_mult_vec(t_matrix3d *matrix, t_vec3d *vec)
 	v3 = vec_scale(matrix->v3, vec->z);
 	if (!v3)
 		return (free_vectors(v1, v2, 0, 0));
-	//res = vec_add(v2, v3);
 	add_vec_inplace(v2, v3);
 	res = vec_add(v2, v1);
 	free_vectors(v1, v2, v3, 0);

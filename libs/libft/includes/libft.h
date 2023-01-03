@@ -78,7 +78,8 @@ int			ft_str_startswith(const char *str, const char *needle);
 int			ft_str_endswith(const char *str, const char *needle);
 void		*ft_realloc_gnl(void *src, size_t new_len);
 int			*ft_realloc_intarr(int *src, size_t arr_size, size_t new_size);
-int			**ft_realloc_int2darr(int **src, size_t elem_size, size_t arr_size, size_t new_size);
+int			**ft_realloc_int2darr(int **src, size_t elem_size,
+				size_t arr_size, size_t new_size);
 char		*ft_realloc_chararr(char *src, size_t arr_size, size_t new_size);
 
 /* math */
@@ -152,15 +153,15 @@ typedef struct s_screen_info
 	double				eye_z;
 	t_matrix3d			*rotation_matrix;
 	t_vec3d				*rotation_center;
-	int 				rotation_speed;
+	int					rotation_speed;
 	int					screen_depth;
 	t_plane3d			*screen_plane;
 	int					background_color;
 	int					pos_x;
-	int 				pos_y;
-	int 				pos_z;
-	int 				mov_speed;
-	int 				zoom_speed;
+	int					pos_y;
+	int					pos_z;
+	int					mov_speed;
+	int					zoom_speed;
 	enum e_projection	projection;
 }	t_screen_info;
 
@@ -205,7 +206,7 @@ void		invert_vec_inplace(t_vec3d *v);
 t_vec3d		*cross(t_vec3d *v1, t_vec3d *v2);
 
 t_vec3d		*apply_rotation_matrix_to_point(t_vec3d *point,
-										   t_screen_info *screen_info);
+				t_screen_info *screen_info);
 t_vec3d		*project_perspective(t_vec3d *point, t_plane3d *plane,
 				t_screen_info *screen_info);
 t_vec3d		*project_orthogonal(t_vec3d *point, t_plane3d *plane,

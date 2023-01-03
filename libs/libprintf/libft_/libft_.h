@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef LIBFT_H_
-# define LIBFT_H_
+#ifndef LIBFT__H
+# define LIBFT__H
 
 # include <stdlib.h>
 # include <limits.h>

@@ -76,7 +76,7 @@ char	*ft_itoa(int n)
 	while (i - neg < res_len(n))
 	{
 		res[i] = my_abs_((n / my_pow(10,
-									 res_len(n) - (i - neg) - 1)) % 10) + '0';
+						res_len(n) - (i - neg) - 1)) % 10) + '0';
 		i ++;
 	}
 	res[i] = 0;
