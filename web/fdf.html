@@ -1,35 +1,108 @@
 <!DOCTYPE html>
-<!--https://www.youtube.com/watch?v=a6aRu6fFaMI-->
-<html><head>
-<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>fdf</title>
+	<title>FDF</title>
+
+	<style>
+		body {
+			margin: 5%;
+			font-family: Helvetica Neue, Helvetica;
+			color: rgba(232, 230, 227, 0.75);
+			background-color: #1C1D1F;
+			/*overflow-x:hidden;*/
+		}
+
+		a {
+			color: #43A3DB;
+			text-decoration: none;
+		}
+	</style>
 </head>
 <body>
 
 <h1 id="need_js" style="display: none;">You need to enable javascript in order to view this page.</h1>
 
-<h1>fdf</h1>
-<h2>I needed to learn drawing objects in three dimensions for a school 
-project and this is my playground. It is based on the mathematical 
-concepts of projecting points in space onto a plane, which is the 
-screen.</h2>
+<h1>FDF</h1>
+<br>
+<h2>
+	FDF is short for ’fil de fer’ in French which means ’wireframe model’. It is a <a href="https://42.fr/en/homepage/">School 42</a> project that consists of
+	 representing a map of points in isometric projection, rendered as a wireframe. The only given information are the
+	heights of the points. The project was originally written in C, but a JavaScript demo is available below.
+	<br>
+	The GitHub repo containing the source and Linux and MacOS builds is available <a href="https://github.com/jwikiera/fdf">here</a>.
+	<br>
+	The assignment subject can be found <a href="https://raw.githubusercontent.com/jwikiera/fdf/master/subject.pdf">here</a>.
+	<br>
+	<br>
+	- Use the Left and Right arrow keys to rotate the model around its respective y axis.
+	<br>
+	- Use the Up and Down arrow keys to rotate the model around its respective x axis.
+	<br>
+	- Use the A and D arrow keys to rotate the model around its respective z axis.
+	<br>
+	You can also use the buttons below.
+	<br><br>
+	<i>Note: in order to use arrow keys, you have to select the target canvas by clicking on it</i>
+</h2>
 
-<h2>The cube on the left is in perspective projection. The cube on the 
-right is in orthogonal projection. For documentation press Ctrl+U.</h2>
-<h2>Use the Left and Right arrow keys to rotate the cubes around their respective y axis.</h2>
-<h2>Use the Up and Down arrow keys to rotate the cubes around their respective x axis.</h2>
-<h2>Use the A and D arrow keys to rotate the cubes around their respective z axis.</h2>
-<h2>You can also use the buttons below.</h2>
+<canvas id="canvas_fdf" style="border: 1px solid #43A3DB" width="1920" height="1080"></canvas>
+<br>
 
-<canvas id="canvas" style="border: 2px solid" width="1920" height="1080"></canvas><br>
+<button id="button_up_fdf" style="width: 100px; height: 50px">X +</button>
+<button id="button_down_fdf" style="width: 100px; height: 50px">X -</button>
+<button id="button_toggle_proj_fdf" style="width: 210px; height: 50px">Toggle projection: orthogonal</button>
+<br>
+<button id="button_left_fdf" style="width: 100px; height: 50px">Y +</button>
+<button id="button_right_fdf" style="width: 100px; height: 50px">Y -</button>
+<button id="button_zoom_in_fdf" style="width: 210px; height: 50px">Zoom in</button>
+<br>
+<button id="button_a_fdf" style="width: 100px; height: 50px">Z +</button>
+<button id="button_d_fdf" style="width: 100px; height: 50px">Z -</button>
+<button id="button_zoom_out_fdf" style="width: 210px; height: 50px">Zoom out</button>
+<br>
+<h2>
+	Want to try another map? Choose and upload one from <a href="https://github.com/jwikiera/fdf/tree/master/test_maps">here</a>, or make one yourself!
+</h2>
+<input type="file" id="map_file_input" name="map">
+<br>
+<br>
+
+<h2>
+	While starting the project, I needed to refresh some mathematical concepts behind 3D projection. To ease my work
+	with C later, I created the following demo, which demonstrates the projection of two cubes.
+	<br>
+	The cube on the left is in perspective projection. The cube on the right is in orthogonal projection.
+	<br>
+	- Use the Left and Right arrow keys to rotate the cubes around their respective y axis.
+	<br>
+	- Use the Up and Down arrow keys to rotate the cubes around their respective x axis.
+	<br>
+	- Use the A and D arrow keys to rotate the cubes around their respective z axis.
+	<br>
+	You can also use the buttons below.
+</h2>
+
+<canvas id="canvas_cube" style="border: 1px solid #43A3DB" width="1920" height="1080"></canvas>
+<br>
 
 <script>
 	document.getElementById('need_js').style.display = 'none';
-	let width = 1920;//window.innerWidth; // / 10 * 8;
-	document.getElementById('canvas').width = width;
-	document.getElementById('canvas').height = width / 1920 * 1080;
+	let width = window.innerWidth / 10 * 8;
+	document.getElementById('canvas_cube').width = width;
+	document.getElementById('canvas_cube').height = width / 1920 * 1080;
+
+	//document.getElementById('canvas_fdf').width = width;
+	//document.getElementById('canvas_fdf').height = width / 1920 * 1080;
+
+	var selected_canvas = null;
+
+	const Canvases = {
+		fdf: 0,
+		cube: 1
+	}
 </script>
 
 <button id="button_up" style="width: 100px; height: 50px">X +</button>
@@ -42,12 +115,10 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 <button id="button_d" style="width: 100px; height: 50px">Z -</button>
 <br>
 <h2>The dimensions and the initial y and z coordinates of both cubes are identical.</h2>
-<br>
 <h2 id="rotation_h2">Rotation matrix: [[0.880, 0.330, -0.342], [-0.324, 0.943, 0.078], [0.348, 0.043, 0.936]]</h2>
 
+<!-- CLASSES AND ENUMS -->
 <script>
-	/* CLASSES */
-
 	/* Class representing a point in three dimensional space */
 	class Vect3d {
 		constructor(x, y, z) {
@@ -102,29 +173,9 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 		}
 	}
 
+	class Context {
 
-	/* GLOBALS */
-
-	/* The HTML canvas element */
-	var canv = document.getElementById('canvas');
-
-	/* The canvas context */
-	var ctx = canv.getContext('2d');
-
-	/* Distance of the observation point to the origin */
-	var eye_z = 0;
-
-	/* Distance of the screen from the origin */
-	var plane_depth = 200;
-	
-	/* Object representing the screen plane */
-	var screen_plane =  get_screen_plane(canv.width, canv.height, plane_depth);
-
-	/* Rotation matrix */
-	var rotation_matrix = new Matrix3d(new Vect3d(1, 0, 0), new Vect3d(0, 1, 0), new Vect3d(0, 0, 1));
-
-	/* Origin of the rotation */
-	var rotation_center = new Vect3d(0, 0, 0);
+	}
 
 	/* Rotation axis enum */
 	const Rotations = {
@@ -132,10 +183,27 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 		y: 1,
 		z: 2
 	}
+</script>
 
+<!-- FDF SPECIFIC CLASSES AND ENUMS -->
+<script>
+	class Map {
+		constructor(size_x, size_y, map) {
+			this.size_x = size_x;
+			this.size_y = size_y;
+			this.map = map;
+		}
+	}
 
-	/* FUNCTIONS */
-	
+	/* Rotation axis enum */
+	const Projections = {
+		orthogonal: 0,
+		perspective: 1
+	}
+</script>
+
+<!-- FUNCTIONS -->
+<script>
 	/* Subtracting two vectors */
 	function vec_sub(v1, v2) {
 		return (new Vect3d(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z));
@@ -169,19 +237,19 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 	/* Multiplying two 3D matrices */
 	function matrix_mult(m1, m2) {
 		let v1 = new Vect3d(
-			m1.v1.x * m2.v1.x + m1.v2.x * m2.v1.y + m1.v3.x * m2.v1.z,
-			m1.v1.y * m2.v1.x + m1.v2.y * m2.v1.y + m1.v3.y * m2.v1.z,
-			m1.v1.z * m2.v1.x + m1.v2.z * m2.v1.y + m1.v3.z * m2.v1.z);
+				m1.v1.x * m2.v1.x + m1.v2.x * m2.v1.y + m1.v3.x * m2.v1.z,
+				m1.v1.y * m2.v1.x + m1.v2.y * m2.v1.y + m1.v3.y * m2.v1.z,
+				m1.v1.z * m2.v1.x + m1.v2.z * m2.v1.y + m1.v3.z * m2.v1.z);
 
 		let v2 = new Vect3d(
-			m1.v1.x * m2.v2.x + m1.v2.x * m2.v2.y + m1.v3.x * m2.v2.z,
-			m1.v1.y * m2.v2.x + m1.v2.y * m2.v2.y + m1.v3.y * m2.v2.z,
-			m1.v1.z * m2.v2.x + m1.v2.z * m2.v2.y + m1.v3.z * m2.v2.z);
+				m1.v1.x * m2.v2.x + m1.v2.x * m2.v2.y + m1.v3.x * m2.v2.z,
+				m1.v1.y * m2.v2.x + m1.v2.y * m2.v2.y + m1.v3.y * m2.v2.z,
+				m1.v1.z * m2.v2.x + m1.v2.z * m2.v2.y + m1.v3.z * m2.v2.z);
 
 		let v3 = new Vect3d(
-			m1.v1.x * m2.v3.x + m1.v2.x * m2.v3.y + m1.v3.x * m2.v3.z,
-			m1.v1.y * m2.v3.x + m1.v2.y * m2.v3.y + m1.v3.y * m2.v3.z,
-			m1.v1.z * m2.v3.x + m1.v2.z * m2.v3.y + m1.v3.z * m2.v3.z);
+				m1.v1.x * m2.v3.x + m1.v2.x * m2.v3.y + m1.v3.x * m2.v3.z,
+				m1.v1.y * m2.v3.x + m1.v2.y * m2.v3.y + m1.v3.y * m2.v3.z,
+				m1.v1.z * m2.v3.x + m1.v2.z * m2.v3.y + m1.v3.z * m2.v3.z);
 		return (new Matrix3d(v1, v2, v3));
 	}
 
@@ -203,26 +271,10 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 			v2 = new Vect3d(0, Math.cos(angle), Math.sin(angle));
 			v3 = new Vect3d(0, - Math.sin(angle), Math.cos(angle));
 		} else if (rotation_axis == Rotations.y) {
-			
+
 			v1 = new Vect3d(Math.cos(angle), 0, - Math.sin(angle));
 			v2 = new Vect3d(0, 1, 0);
 			v3 = new Vect3d(Math.sin(angle), 0, Math.cos(angle));
-			
-			/*
-			let dist_from_origin = Math.sqrt();
-
-			v1 = new Vect3d(Math.cos(angle),
-							0,
-							0);
-			v2 = new Vect3d(0,
-							1,
-							0);
-			v3 = new Vect3d(0,
-							0,
-							Math.sin(angle));
-
-			*/
-
 		} else {
 			v1 = new Vect3d(Math.cos(angle), Math.sin(angle), 0);
 			v2 = new Vect3d(-Math.sin(angle), Math.cos(angle), 0);
@@ -295,69 +347,69 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 	}
 
 	/* Projecting a point on a plane using perspective projection (eye position is Vect3d(canv.width / 2, canv.height / 2, eye_z)) */
-	function point_projection(point, plane) {
-		point = vec_sub(point, rotation_center);
-		point = matrix_mult_vec(rotation_matrix, point);
-		point = vec_add(point, rotation_center);
-		let intersection = intersect(new Line3d(new Vect3d(canv.width / 2, canv.height / 2, eye_z), point), plane);
+	function point_projection(ctx, point, plane) {
+		point = vec_sub(point, ctx.rotation_center);
+		point = matrix_mult_vec(ctx.rotation_matrix, point);
+		point = vec_add(point, ctx.rotation_center);
+		//let intersection = intersect(new Line3d(new Vect3d(canvas.width / 2, canvas.height / 2, eye_z), point), plane);
+		let intersection = intersect(new Line3d(ctx.eye_pos, point), plane);
 		return (intersection);
 	}
 
 	/* Projecting a point on a plane using orthogonal projection */
-	function point_projection_orthogonal(point, plane) {
-		point = vec_sub(point, rotation_center);
-		point = matrix_mult_vec(rotation_matrix, point);
-		point = vec_add(point, rotation_center);
+	function point_projection_orthogonal(ctx, point, plane) {
+		point = vec_sub(point, ctx.rotation_center);
+		point = matrix_mult_vec(ctx.rotation_matrix, point);
+		point = vec_add(point, ctx.rotation_center);
 		let line = line_from_point_and_vect(point, cross(plane.v1, plane.v2));
 		return (intersect(line, plane));
 	}
 
 	/* Helper function to draw a circle */
-	function draw_circle(x, y, radius, color = 'black') {
-		ctx.beginPath();
-		ctx.strokeStyle = color;
-		ctx.arc(x, y, radius, 0, 2 * Math.PI);
-		ctx.stroke();
-		ctx.closePath();
+	function draw_circle(ctx, x, y, radius, color = 'black') {
+		ctx.canvas_ctx.beginPath();
+		ctx.canvas_ctx.strokeStyle = color;
+		ctx.canvas_ctx.arc(x, y, radius, 0, 2 * Math.PI);
+		ctx.canvas_ctx.stroke();
+		ctx.canvas_ctx.closePath();
 	}
 
 	/* Helper function to draw a small circle at the location of a given vector (z cooridnate is ignored) */
-	function draw_vect(v2, color = 'black') {
-		draw_circle(v2.x, v2.y, 5, color);
+	function draw_vect(ctx, v2, color = 'black') {
+		draw_circle(ctx, v2.x, v2.y, 5, color);
 	}
 
 	/* Helper function to draw a line between two 2D points */
-	function connect_vects(v1, v2, draw_vects = true, color = 'black') {
-		ctx.strokeStyle = color;
-		ctx.lineWidth = 3;
-		ctx.beginPath();
-		ctx.moveTo(v1.x, v1.y);
-		ctx.lineTo(v2.x, v2.y);
-		ctx.stroke();
-		ctx.closePath();
+	function connect_vects(ctx, v1, v2, draw_vects = true, color = 'black') {
+		ctx.canvas_ctx.strokeStyle = color;
+		ctx.canvas_ctx.beginPath();
+		ctx.canvas_ctx.moveTo(v1.x, v1.y);
+		ctx.canvas_ctx.lineTo(v2.x, v2.y);
+		ctx.canvas_ctx.stroke();
+		ctx.canvas_ctx.closePath();
 
 		if (draw_vects) {
-			draw_vect(v1, color);
-			draw_vect(v2, color);
+			draw_vect(ctx, v1, color);
+			draw_vect(ctx, v2, color);
 		}
 	}
 
 	/* Helper function filling the HTML Canvas with a given color */
-	function fill_canvas(color = 'white') {
-		ctx.fillStyle = color;
-		ctx.beginPath();
-		ctx.rect(0, 0, canv.width, canv.height);
-		ctx.fill();
-		ctx.closePath();
+	function fill_canvas(ctx, color = 'white') {
+		ctx.canvas_ctx.fillStyle = color;
+		ctx.canvas_ctx.beginPath();
+		ctx.canvas_ctx.rect(0, 0, ctx.canvas.width,  ctx.canvas.height);
+		ctx.canvas_ctx.fill();
+		ctx.canvas_ctx.closePath();
 	}
 
 	/* Adds rotation to the global rotation matrix, on the given axis */
-	function add_angle_to_rotation_matrix(angle, rotation_axis, is_rad = false) {
-		rotation_matrix = matrix_mult(rotation_matrix, get_rotation_matrix(angle, rotation_axis, is_rad));
+	function add_angle_to_rotation_matrix(ctx, angle, rotation_axis, is_rad = false) {
+		ctx.rotation_matrix = matrix_mult(ctx.rotation_matrix, get_rotation_matrix(angle, rotation_axis, is_rad));
 	}
 
 	/* Drawing a cube in perspective projection */
-	function draw_cube(plane, x, y, z, size, draw_vects = false, color = 'black') {
+	function draw_cube(ctx, plane, x, y, z, size, draw_vects = false, color = 'black') {
 		let p1 = new Vect3d(x, y, z);
 		let p2 = new Vect3d(x + size, y, z);
 		let p3 = new Vect3d(x + size, y, z + size);
@@ -368,33 +420,33 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 		let p7 = new Vect3d(x + size, y + size, z + size);
 		let p8 = new Vect3d(x, y + size, z + size);
 
-		connect_vects(point_projection(p1, plane), point_projection(p2, plane), false, color);
-		connect_vects(point_projection(p2, plane), point_projection(p3, plane), false, color);
-		connect_vects(point_projection(p3, plane), point_projection(p4, plane), false, color);
-		connect_vects(point_projection(p4, plane), point_projection(p1, plane), false, color);
-		connect_vects(point_projection(p5, plane), point_projection(p6, plane), false, color);
-		connect_vects(point_projection(p6, plane), point_projection(p7, plane), false, color);
-		connect_vects(point_projection(p7, plane), point_projection(p8, plane), false, color);
-		connect_vects(point_projection(p8, plane), point_projection(p5, plane), false, color);
-		connect_vects(point_projection(p1, plane), point_projection(p5, plane), false, color);
-		connect_vects(point_projection(p4, plane), point_projection(p8, plane), false, color);
-		connect_vects(point_projection(p3, plane), point_projection(p7, plane), false, color);
-		connect_vects(point_projection(p2, plane), point_projection(p6, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p1, plane), point_projection(ctx, p2, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p2, plane), point_projection(ctx, p3, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p3, plane), point_projection(ctx, p4, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p4, plane), point_projection(ctx, p1, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p5, plane), point_projection(ctx, p6, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p6, plane), point_projection(ctx, p7, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p7, plane), point_projection(ctx, p8, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p8, plane), point_projection(ctx, p5, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p1, plane), point_projection(ctx, p5, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p4, plane), point_projection(ctx, p8, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p3, plane), point_projection(ctx, p7, plane), false, color);
+		connect_vects(ctx, point_projection(ctx, p2, plane), point_projection(ctx, p6, plane), false, color);
 
 		if (draw_vects) {
-			draw_vect(point_projection(p4, plane), 'red');
-			draw_vect(point_projection(p3, plane), 'black');
-			draw_vect(point_projection(p1, plane), 'blue');
-			draw_vect(point_projection(p2, plane), 'pink');
-			draw_vect(point_projection(p8, plane), 'green');
-			draw_vect(point_projection(p7, plane), 'lightblue');
-			draw_vect(point_projection(p5, plane), 'lightgreen');
-			draw_vect(point_projection(p6, plane), 'yellow');
+			draw_vect(ctx, point_projection(ctx, p4, plane), 'red');
+			draw_vect(ctx, point_projection(ctx, p3, plane), 'black');
+			draw_vect(ctx, point_projection(ctx, p1, plane), 'blue');
+			draw_vect(ctx, point_projection(ctx, p2, plane), 'pink');
+			draw_vect(ctx, point_projection(ctx, p8, plane), 'green');
+			draw_vect(ctx, point_projection(ctx, p7, plane), 'lightblue');
+			draw_vect(ctx, point_projection(ctx, p5, plane), 'lightgreen');
+			draw_vect(ctx, point_projection(ctx, p6, plane), 'yellow');
 		}
 	}
 
 	/* Drawing a cube in orthogonal projection */
-	function draw_cube_orthogonal(plane, x, y, z, size, draw_vects = false, color = 'black') {
+	function draw_cube_orthogonal(ctx, plane, x, y, z, size, draw_vects = false, color = 'black') {
 		let p1 = new Vect3d(x, y, z);
 		let p2 = new Vect3d(x + size, y, z);
 		let p3 = new Vect3d(x + size, y, z + size);
@@ -405,96 +457,326 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 		let p7 = new Vect3d(x + size, y + size, z + size);
 		let p8 = new Vect3d(x, y + size, z + size);
 
-		connect_vects(point_projection_orthogonal(p1, plane), point_projection_orthogonal(p2, plane), false, color);
-		connect_vects(point_projection_orthogonal(p2, plane), point_projection_orthogonal(p3, plane), false, color);
-		connect_vects(point_projection_orthogonal(p3, plane), point_projection_orthogonal(p4, plane), false, color);
-		connect_vects(point_projection_orthogonal(p4, plane), point_projection_orthogonal(p1, plane), false, color);
-		connect_vects(point_projection_orthogonal(p5, plane), point_projection_orthogonal(p6, plane), false, color);
-		connect_vects(point_projection_orthogonal(p6, plane), point_projection_orthogonal(p7, plane), false, color);
-		connect_vects(point_projection_orthogonal(p7, plane), point_projection_orthogonal(p8, plane), false, color);
-		connect_vects(point_projection_orthogonal(p8, plane), point_projection_orthogonal(p5, plane), false, color);
-		connect_vects(point_projection_orthogonal(p1, plane), point_projection_orthogonal(p5, plane), false, color);
-		connect_vects(point_projection_orthogonal(p4, plane), point_projection_orthogonal(p8, plane), false, color);
-		connect_vects(point_projection_orthogonal(p3, plane), point_projection_orthogonal(p7, plane), false, color);
-		connect_vects(point_projection_orthogonal(p2, plane), point_projection_orthogonal(p6, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p1, plane), point_projection_orthogonal(ctx, p2, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p2, plane), point_projection_orthogonal(ctx, p3, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p3, plane), point_projection_orthogonal(ctx, p4, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p4, plane), point_projection_orthogonal(ctx, p1, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p5, plane), point_projection_orthogonal(ctx, p6, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p6, plane), point_projection_orthogonal(ctx, p7, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p7, plane), point_projection_orthogonal(ctx, p8, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p8, plane), point_projection_orthogonal(ctx, p5, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p1, plane), point_projection_orthogonal(ctx, p5, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p4, plane), point_projection_orthogonal(ctx, p8, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p3, plane), point_projection_orthogonal(ctx, p7, plane), false, color);
+		connect_vects(ctx, point_projection_orthogonal(ctx, p2, plane), point_projection_orthogonal(ctx, p6, plane), false, color);
 
 		if (draw_vects) {
-			draw_vect(point_projection_orthogonal(p4, plane), 'red');
-			draw_vect(point_projection_orthogonal(p3, plane), 'black');
-			draw_vect(point_projection_orthogonal(p1, plane), 'blue');
-			draw_vect(point_projection_orthogonal(p2, plane), 'pink');
-			draw_vect(point_projection_orthogonal(p8, plane), 'green');
-			draw_vect(point_projection_orthogonal(p7, plane), 'lightblue');
-			draw_vect(point_projection_orthogonal(p5, plane), 'lightgreen');
-			draw_vect(point_projection_orthogonal(p6, plane), 'yellow');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p4, plane), 'red');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p3, plane), 'black');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p1, plane), 'blue');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p2, plane), 'pink');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p8, plane), 'green');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p7, plane), 'lightblue');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p5, plane), 'lightgreen');
+			draw_vect(ctx, point_projection_orthogonal(ctx, p6, plane), 'yellow');
 		}
 	}
 
+	function focus_fdf_canvas() {
+		selected_canvas = Canvases.fdf;
+		document.getElementById('canvas_fdf').style.borderWidth = "5px";
+		document.getElementById('canvas_cube').style.borderWidth = "1px";
+	}
+
+	function focus_cube_canvas() {
+		selected_canvas = Canvases.cube;
+		document.getElementById('canvas_cube').style.borderWidth = "5px";
+		document.getElementById('canvas_fdf').style.borderWidth = "1px";
+	}
+
+	function unfocus_canvases() {
+		document.getElementById('canvas_fdf').style.borderWidth = "1px";
+		document.getElementById('canvas_cube').style.borderWidth = "1px";
+		selected_canvas = null;
+	}
+</script>
+
+<!-- FDF SPECIFIC FUNCS -->
+<script>
+	function str_to_map(str) {
+		let res = new Map(0, 0, 0);
+		let map_ = [];
+
+		lines = str.split('\n');
+		for (let i = 0; i < lines.length; i++) {
+			if (lines[i].trim().length == 0) {
+				continue;
+			}
+			let elems = lines[i].trim().split(/\s+/);
+			if (res.size_y == 0) {
+				res.size_y = elems.length;
+			}
+			if (elems.length != res.size_y) {
+				console.error("Error while loading map, row size is different from the first one! (row " + i +")");
+				return null;
+			}
+			map_[i] = [];
+			for (let j = 0; j < elems.length; j++) {
+				map_[i][j] = parseInt(elems[j]);
+			}
+		}
+		res.size_x = map_.length;
+		res.map = map_;
+		return res;
+	}
+
+	function apply_rotation_matrix_to_point(ctx, point) {
+		let res = vec_sub(point, ctx.rotation_center);
+		res = matrix_mult_vec(ctx.rotation_matrix, res);
+		return vec_add(res, ctx.rotation_center);
+	}
+
+	function draw_map(ctx) {
+		let margin = ctx.canvas.height / 2.6;
+		let size = Math.max(Math.min((ctx.canvas.height - margin) / ctx.map_struct.size_x, (ctx.canvas.width - margin) / ctx.map_struct.size_y), 1);
+		if (ctx.projection == Projections.orthogonal) {
+			size = Math.max(1, size - ctx.pos_z);
+		}
+		let base_x = ctx.canvas.width / 2 - ctx.map_struct.size_y * size / 2 + ctx.pos_x;
+		let base_y = ctx.canvas.height / 2 - ctx.map_struct.size_x * size / 2 + ctx.pos_y;
+		let depth = ctx.plane_depth + 150;
+
+		let rotation_center_prev = new Vect3d(ctx.rotation_center.x, ctx.rotation_center.y, ctx.rotation_center.z);
+		ctx.rotation_center = new Vect3d(base_x + ctx.map_struct.size_y * size / 2 - size / 2, base_y + ctx.map_struct.size_x * size / 2 - size / 2, depth + ctx.pos_z);
+		let previous_point_y = null;
+		for (let i = 0; i < ctx.map_struct.size_y; i ++) {
+			for (let j = 0; j < ctx.map_struct.size_x; j ++) {
+				let pt = new Vect3d(base_x + i * size, base_y + j * size, depth - ctx.map_struct.map[j][i] * ctx.height_mult + ctx.pos_z);
+				let pt_rotated = apply_rotation_matrix_to_point(ctx, pt);
+				if (previous_point_y != null && ctx.projection == Projections.orthogonal) {
+					let proj1 = point_projection_orthogonal(ctx, previous_point_y, ctx.screen_plane);
+					let proj2 = point_projection_orthogonal(ctx, pt, ctx.screen_plane);
+					connect_vects(ctx, proj1, proj2, false);
+				} else if (previous_point_y != null && ctx.projection == Projections.perspective && pt_rotated.z > ctx.plane_depth) {
+					let proj1 = point_projection(ctx, previous_point_y, ctx.screen_plane);
+					let proj2 = point_projection(ctx, pt, ctx.screen_plane);
+					connect_vects(ctx, proj1, proj2, false);
+				}
+				previous_point_y = new Vect3d(pt.x, pt.y, pt.z);
+			}
+			previous_point_y = null;
+		}
+
+		let previous_point_x = null;
+		for (let i = 0; i < ctx.map_struct.size_x; ++i) {
+			for (let j = 0; j < ctx.map_struct.size_y; ++j) {
+				let pt = new Vect3d(base_x + j * size, base_y + i * size, depth - ctx.map_struct.map[i][j] * ctx.height_mult + ctx.pos_z);
+				let pt_rotated = apply_rotation_matrix_to_point(ctx, pt);
+				if (previous_point_x != null && ctx.projection == Projections.orthogonal) {
+					let proj1 = point_projection_orthogonal(ctx, previous_point_x, ctx.screen_plane);
+					let proj2 = point_projection_orthogonal(ctx, pt, ctx.screen_plane);
+					connect_vects(ctx, proj1, proj2, false);
+				} else if (previous_point_x && ctx.projection == Projections.perspective && pt_rotated.z > ctx.plane_depth) {
+					let proj1 = point_projection(ctx, previous_point_x, ctx.screen_plane);
+					let proj2 = point_projection(ctx, pt, ctx.screen_plane);
+					connect_vects(ctx, proj1, proj2, false);
+				}
+				previous_point_x = new Vect3d(pt.x, pt.y, pt.z);
+			}
+			previous_point_x = null;
+		}
+	}
+</script>
+
+<!-- FDF DEMO -->
+<script>
+	/* GLOBALS */
+	let base_map_str =  "0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n" +
+						"0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n" +
+						"0  0 10 10  0  0 10 10  0  0  0 10 10 10 10 10  0  0  0\n" +
+						"0  0 10 10  0  0 10 10  0  0  0  0  0  0  0 10 10  0  0\n" +
+						"0  0 10 10  0  0 10 10  0  0  0  0  0  0  0 10 10  0  0\n" +
+						"0  0 10 10 10 10 10 10  0  0  0  0 10 10 10 10  0  0  0\n" +
+						"0  0  0 10 10 10 10 10  0  0  0 10 10  0  0  0  0  0  0\n" +
+						"0  0  0  0  0  0 10 10  0  0  0 10 10  0  0  0  0  0  0\n" +
+						"0  0  0  0  0  0 10 10  0  0  0 10 10 10 10 10 10  0  0\n" +
+						"0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n" +
+						"0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0  0\n";
+
+	/* Context variable */
+	var ctx_fdf = new Context();
+
+	function set_fdf_ctx(initial) {
+
+		if (initial) {
+			/* Distance of the observation point to the origin */
+			ctx_fdf.eye_z = 0;
+
+			/* Distance of the screen from the origin */
+			ctx_fdf.plane_depth = 200;
+
+			/* Rotation matrix */
+			ctx_fdf.rotation_matrix = new Matrix3d(new Vect3d(1, 0, 0), new Vect3d(0, 1, 0), new Vect3d(0, 0, 1));
+
+			/* Origin of the rotation */
+			ctx_fdf.rotation_center = new Vect3d(0, 0, 0);
+
+			if (ctx_fdf.map_struct === undefined) {
+				console.log('Loading default map');
+				ctx_fdf.map_struct = str_to_map(base_map_str);
+			}
+
+			/* projection type */
+			ctx_fdf.projection = Projections.orthogonal;
+
+			/* model x pos */
+			ctx_fdf.pos_x = 0;
+
+			/* model y pos */
+			ctx_fdf.pos_y = 0;
+
+			/* model z pos */
+			ctx_fdf.pos_z = 0;
+
+			ctx_fdf.height_mult = 5;
+		}
+
+		/* The HTML canvas element */
+		ctx_fdf.canvas = document.getElementById('canvas_fdf');
+
+		/* The canvas context */
+		ctx_fdf.canvas_ctx = ctx_fdf.canvas.getContext('2d');
+
+
+		ctx_fdf.eye_pos = new Vect3d(ctx_fdf.canvas.width / 2, ctx_fdf.canvas.height / 2, ctx_fdf.eye_z);
+
+		/* Object representing the screen plane */
+		ctx_fdf.screen_plane =  get_screen_plane(ctx_fdf.canvas.width, ctx_fdf.canvas.height, ctx_fdf.plane_depth);
+
+		/* Adapting the canvas size */
+		let width = Math.min(1115, window.innerWidth / 10 * 8);
+		if (window.innerWidth < 1000) {
+			width = window.innerWidth / 10 * 9;
+		}
+		ctx_fdf.canvas.width = width;
+		ctx_fdf.canvas.height = width / 1920 * 1080;
+
+		/* Adapting the line width */
+		ctx_fdf.canvas_ctx.lineWidth = 1;
+		if (ctx_fdf.canvas.width > 600) {
+			ctx_fdf.canvas_ctx.lineWidth = 2;
+		}
+		if (ctx_fdf.canvas.width > 1100) {
+			ctx_fdf.canvas_ctx.lineWidth = 3;
+		}
+	}
+
+	set_fdf_ctx(true);
 
 	/* PLAYGROUND */
 
-	/*let intersection = intersect(new Line3d(new Vect3d(0, 0, 0), new Vect3d(0, 200, 300)), new Plane3d(new Vect3d(0, 0, 200), new Vect3d(0, -540, 200), new Vect3d(-960, -540, 200)));
-	console.log(intersection);*/
-	
-	//console.log(solve_general(new Vect3d(0, 200, 300), new Vect3d(0, 0, 200), new Vect3d(960, 0, 0), new Vect3d(-960, -540, 0)))
 
-	//let line = new Line3d(new Vect3d(0, 0, 0), new Vect3d(0, 200, 300));
-	
-	/*let p1 = new Vect3d(400, 200, 300);
-	let p2 = new Vect3d(500, 200, 300);
-	let p3 = new Vect3d(500, 200, 400);
-	let p4 = new Vect3d(400, 200, 400);
 
-	let p5 = new Vect3d(400, 300, 300);
-	let p6 = new Vect3d(500, 300, 300);
-	let p7 = new Vect3d(500, 300, 400);
-	let p8 = new Vect3d(400, 300, 400);
-	
-	connect_vects(point_projection(p1, screen_plane), point_projection(p2, screen_plane));
-	connect_vects(point_projection(p2, screen_plane), point_projection(p3, screen_plane));
-	connect_vects(point_projection(p3, screen_plane), point_projection(p4, screen_plane));
-	connect_vects(point_projection(p4, screen_plane), point_projection(p1, screen_plane));
-	connect_vects(point_projection(p5, screen_plane), point_projection(p6, screen_plane));
-	connect_vects(point_projection(p6, screen_plane), point_projection(p7, screen_plane));
-	connect_vects(point_projection(p7, screen_plane), point_projection(p8, screen_plane));
-	connect_vects(point_projection(p8, screen_plane), point_projection(p5, screen_plane));
-	connect_vects(point_projection(p1, screen_plane), point_projection(p5, screen_plane));
-	connect_vects(point_projection(p4, screen_plane), point_projection(p8, screen_plane));
-	connect_vects(point_projection(p3, screen_plane), point_projection(p7, screen_plane));
-	connect_vects(point_projection(p2, screen_plane), point_projection(p6, screen_plane));
-	*/
+	function draw_things_fdf() {
+		fill_canvas(ctx_fdf, '#FFFFFF');
+		draw_map(ctx_fdf);
+	}
+
+	/* Isometric projection */
+	add_angle_to_rotation_matrix(ctx_fdf, -35.264, Rotations.x);
+	add_angle_to_rotation_matrix(ctx_fdf, 45, Rotations.z);
+
+	draw_things_fdf();
+</script>
+
+<!-- CUBE DEMO -->
+<script>
+	/* GLOBALS */
+
+	/* Context variable */
+	var ctx_cube = new Context();
+
+	function set_cube_ctx(initial) {
+
+		if (initial) {
+			/* Distance of the observation point to the origin */
+			ctx_cube.eye_z = 0;
+
+			/* Distance of the screen from the origin */
+			ctx_cube.plane_depth = 200;
+
+			/* Rotation matrix */
+			ctx_cube.rotation_matrix = new Matrix3d(new Vect3d(1, 0, 0), new Vect3d(0, 1, 0), new Vect3d(0, 0, 1));
+
+			/* Origin of the rotation */
+			ctx_cube.rotation_center = new Vect3d(0, 0, 0);
+		}
+
+		/* The HTML canvas element */
+		ctx_cube.canvas = document.getElementById('canvas_cube');
+
+		/* The canvas context */
+		ctx_cube.canvas_ctx = ctx_cube.canvas.getContext('2d');
+
+
+		ctx_cube.eye_pos = new Vect3d(ctx_cube.canvas.width / 2, ctx_cube.canvas.height / 2, ctx_cube.eye_z);
+
+		/* Object representing the screen plane */
+		ctx_cube.screen_plane =  get_screen_plane(ctx_cube.canvas.width, ctx_cube.canvas.height, ctx_cube.plane_depth);
+
+		/* Adapting the canvas size */
+		let width = Math.min(1115, window.innerWidth / 10 * 8);
+		if (window.innerWidth < 1000) {
+			width = window.innerWidth / 10 * 9;
+		}
+		ctx_cube.canvas.width = width;
+		ctx_cube.canvas.height = width / 1920 * 1080;
+
+		/* Adapting line width */
+		ctx_cube.canvas_ctx.lineWidth = 1;
+		if (ctx_cube.canvas.width > 600) {
+			ctx_cube.canvas_ctx.lineWidth = 2;
+		}
+		if (ctx_cube.canvas.width > 1100) {
+			ctx_cube.canvas_ctx.lineWidth = 3;
+		}
+	}
+
+	set_cube_ctx(true);
+
+	/* PLAYGROUND */
 
 	function draw_the_perspective_cube() {
-		let cube_width = canv.height / 4;
-		let cube_x = canv.width / 5 - cube_width / 2;
-		let cube_y = canv.height / 2 - cube_width / 2;
-		let cube_z = plane_depth + 100;
+		let cube_width = ctx_cube.canvas.height / 4;
+		let cube_x = ctx_cube.canvas.width / 5 - cube_width / 2;
+		let cube_y = ctx_cube.canvas.height / 2 - cube_width / 2;
+		let cube_z = ctx_cube.plane_depth + 100;
 
-		let rotation_center_prev = new Vect3d(rotation_center.x, rotation_center.y, rotation_center.z);
-		rotation_center = new Vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
-		draw_cube(screen_plane, cube_x, cube_y, cube_z, cube_width, true);
-		rotation_center = rotation_center_prev;
+		let rotation_center_prev = new Vect3d(ctx_cube.rotation_center.x, ctx_cube.rotation_center.y, ctx_cube.rotation_center.z);
+		ctx_cube.rotation_center = new Vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
+		draw_cube(ctx_cube, ctx_cube.screen_plane, cube_x, cube_y, cube_z, cube_width, true);
+		ctx_cube.rotation_center = rotation_center_prev;
 	}
 
 	function draw_the_orthogonal_cube() {
-		let cube_width = canv.height / 4;
-		let cube_x = canv.width / 3 * 2 - cube_width / 2;
-		let cube_y = canv.height / 2 - cube_width / 2;
-		let cube_z = plane_depth + 100;
+		let cube_width = ctx_cube.canvas.height / 4;
+		let cube_x = ctx_cube.canvas.width / 3 * 2 - cube_width / 2;
+		let cube_y = ctx_cube.canvas.height / 2 - cube_width / 2;
+		let cube_z = ctx_cube.plane_depth + 100;
 
 
-		let rotation_center_prev = new Vect3d(rotation_center.x, rotation_center.y, rotation_center.z);
-		rotation_center = new Vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
-		draw_cube_orthogonal(screen_plane, cube_x, cube_y, cube_z, cube_width, true);
-		rotation_center = rotation_center_prev;
+		let rotation_center_prev = new Vect3d(ctx_cube.rotation_center.x, ctx_cube.rotation_center.y, ctx_cube.rotation_center.z);
+		ctx_cube.rotation_center = new Vect3d(cube_x + cube_width / 2, cube_y + cube_width /2, cube_z + cube_width / 2);
+		draw_cube_orthogonal(ctx_cube, ctx_cube.screen_plane, cube_x, cube_y, cube_z, cube_width, true);
+		ctx_cube.rotation_center = rotation_center_prev;
 	}
 
-	function draw_things() {
-		fill_canvas('#969595');
+	function draw_things_cube() {
+		fill_canvas(ctx_cube, '#969595');
 		draw_the_perspective_cube();
 		draw_the_orthogonal_cube();
 
-		document.getElementById("rotation_h2").innerText = 'Rotation matrix: ' + rotation_matrix;
+		document.getElementById("rotation_h2").innerText = 'Rotation matrix: ' + ctx_cube.rotation_matrix;
 	}
 
 	
@@ -505,64 +787,237 @@ right is in orthogonal projection. For documentation press Ctrl+U.</h2>
 	//draw_cube(screen_plane, -100, -100, 300, 200, true);
 	//draw_cube(screen_plane, canv.width / 2 - 100, canv.height / 2 - 100, plane_depth + 100, 200, true);
 
-	test_point = new Vect3d(200, 300, plane_depth);
+	test_point = new Vect3d(200, 300, ctx_cube.plane_depth);
 	test_line = new Line3d(test_point, test_point);
-	console.log(cross(screen_plane.v1, screen_plane.v2));
+	//console.log(cross(ctx_cube.screen_plane.v1, ctx_cube.screen_plane.v2));
 
 	//draw_cube(screen_plane, 0, 0, 300, 200, true);
 
 	/* Isometric projection */
-	add_angle_to_rotation_matrix(35.264, Rotations.x);
-	add_angle_to_rotation_matrix(45, Rotations.y);
+	add_angle_to_rotation_matrix(ctx_cube, 35.264, Rotations.x);
+	add_angle_to_rotation_matrix(ctx_cube, 45, Rotations.y);
 
 
-	draw_things();
+	draw_things_cube();
+</script>
+
+<!-- EVENT LISTENERS -->
+<script>
+	document.getElementById('map_file_input').onload = function () {
+		console.log('hmmmmm');
+		if (event.target.files.length == 0) {
+			return;
+		}
+		let file = event.target.files[0];
+		let reader = new FileReader();
+		reader.onload = function() {
+			//console.log(this.result);
+			ctx_fdf.map_struct = str_to_map(this.result);
+			draw_things_fdf();
+		}
+		reader.readAsText(file);
+	};
+
+	document.getElementById('map_file_input').onchange = function () {
+		if (event.target.files.length == 0) {
+			return;
+		}
+		let file = event.target.files[0];
+		let reader = new FileReader();
+		reader.onload = function() {
+			//console.log(this.result);
+			ctx_fdf.map_struct = str_to_map(this.result);
+			draw_things_fdf();
+		}
+		reader.readAsText(file);
+	};
 
 	document.addEventListener('keydown', (event) => {
-	  var name = event.key;
-	  var code = event.code;
-	  // Alert the key name and key code on keydown
-	  //alert(`Key pressed ${name} \r\n Key code value: ${code}`);
-	  if (event.code == 'ArrowRight') {
-	  	add_angle_to_rotation_matrix(- 5, Rotations.y);
-	  } else if (event.code == 'ArrowLeft') {
-	  	add_angle_to_rotation_matrix(5, Rotations.y);
-	  } else if (event.code == 'ArrowUp') {
-	  	add_angle_to_rotation_matrix(- 5, Rotations.x);
-	  } else if (event.code == 'ArrowDown') {
-	  	add_angle_to_rotation_matrix(5, Rotations.x);
-	  } else if (event.code == 'KeyA') {
-	  	add_angle_to_rotation_matrix(- 5, Rotations.z);
-	  } else if (event.code == 'KeyD') {
-	  	add_angle_to_rotation_matrix(5, Rotations.z);
-	  }
+		var name = event.key;
+		var code = event.code;
+		// Alert the key name and key code on keydown
+		if (code != 'ShiftLeft') {
+			//alert(`Key pressed ${name} \r\n Key code value: ${code}`);
+		}
+		if (event.code == 'ArrowRight') {
+			if (selected_canvas == Canvases.fdf) {
+				add_angle_to_rotation_matrix(ctx_fdf, - 5, Rotations.y);
+			} else if (selected_canvas == Canvases.cube) {
+				add_angle_to_rotation_matrix(ctx_cube, - 5, Rotations.y);
+			}
+		} else if (event.code == 'ArrowLeft') {
+			if (selected_canvas == Canvases.fdf) {
+				add_angle_to_rotation_matrix(ctx_fdf, 5, Rotations.y);
+			} else if (selected_canvas == Canvases.cube) {
+				add_angle_to_rotation_matrix(ctx_cube, 5, Rotations.y);
+			}
+		} else if (event.code == 'ArrowUp') {
+			if (selected_canvas == Canvases.fdf) {
+				add_angle_to_rotation_matrix(ctx_fdf, - 5, Rotations.x);
+			} else if (selected_canvas == Canvases.cube) {
+				add_angle_to_rotation_matrix(ctx_cube, - 5, Rotations.x);
+			}
+		} else if (event.code == 'ArrowDown') {
+			if (selected_canvas == Canvases.fdf) {
+				add_angle_to_rotation_matrix(ctx_fdf, 5, Rotations.x);
+			} else if (selected_canvas == Canvases.cube) {
+				add_angle_to_rotation_matrix(ctx_cube, 5, Rotations.x);
+			}
+		} else if (event.code == 'KeyA') {
+			if (selected_canvas == Canvases.fdf) {
+				add_angle_to_rotation_matrix(ctx_fdf, - 5, Rotations.z);
+			} else if (selected_canvas == Canvases.cube) {
+				add_angle_to_rotation_matrix(ctx_cube, - 5, Rotations.z);
+			}
+		} else if (event.code == 'KeyD') {
+			if (selected_canvas == Canvases.fdf) {
+				add_angle_to_rotation_matrix(ctx_fdf, 5, Rotations.z);
+			} else if (selected_canvas == Canvases.cube) {
+				add_angle_to_rotation_matrix(ctx_cube, 5, Rotations.z);
+			}
+		} else if (event.code == 'NumpadAdd' || event.key == '+') {
+			if (selected_canvas == Canvases.fdf) {
+				ctx_fdf.pos_z -= 7;
+				draw_things_fdf();
+			}
+		} else if (event.code == 'NumpadSubtract' || event.key == '-') {
+			if (selected_canvas == Canvases.fdf) {
+				ctx_fdf.pos_z += 7;
+				draw_things_fdf();
+			}
+		}
 
-	  draw_things();
+		if (selected_canvas == Canvases.fdf) {
+			draw_things_fdf();
+		} else if (selected_canvas == Canvases.cube) {
+			draw_things_cube();
+		}
 	}, false);
 
+	/* Preventing arrows from scrolling page when a canvas is selected */
+	/* Source: https://stackoverflow.com/a/8916697 */
+	window.addEventListener("keydown", function(e) {
+		if (selected_canvas != null) {
+			if(["Space","ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].indexOf(e.code) > -1) {
+				e.preventDefault();
+			}
+		}
+	}, false);
+
+	document.getElementById('button_up_fdf').addEventListener("click", function() {
+		add_angle_to_rotation_matrix(ctx_fdf, 5, Rotations.x);
+		draw_things_fdf();
+	});
+	document.getElementById('button_down_fdf').addEventListener("click", function() {
+		add_angle_to_rotation_matrix(ctx_fdf, - 5, Rotations.x);
+		draw_things_fdf();
+	});
+	document.getElementById('button_left_fdf').addEventListener("click", function() {
+		add_angle_to_rotation_matrix(ctx_fdf, - 5, Rotations.y);
+		draw_things_fdf();
+	});
+	document.getElementById('button_right_fdf').addEventListener("click", function() {
+		add_angle_to_rotation_matrix(ctx_fdf, 5, Rotations.y);
+		draw_things_fdf();
+	});
+	document.getElementById('button_a_fdf').addEventListener("click", function() {
+		add_angle_to_rotation_matrix(ctx_fdf, - 5, Rotations.z);
+		draw_things_fdf();
+	});
+	document.getElementById('button_d_fdf').addEventListener("click", function() {
+		add_angle_to_rotation_matrix(ctx_fdf, 5, Rotations.z);
+		draw_things_fdf();
+	});
+	document.getElementById('button_toggle_proj_fdf').addEventListener("click", function() {
+		if (ctx_fdf.projection == Projections.orthogonal) {
+			ctx_fdf.projection = Projections.perspective;
+			document.getElementById('button_toggle_proj_fdf').innerText = "Toggle projection: perspective";
+		} else {
+			ctx_fdf.projection = Projections.orthogonal;
+			document.getElementById('button_toggle_proj_fdf').innerText = "Toggle projection: orthogonal";
+		}
+		draw_things_fdf();
+	});
+	document.getElementById('button_zoom_in_fdf').addEventListener("click", function() {
+		ctx_fdf.pos_z -= 7;
+		draw_things_fdf();
+	});
+	document.getElementById('button_zoom_out_fdf').addEventListener("click", function() {
+		ctx_fdf.pos_z += 7;
+		draw_things_fdf();
+	});
+
 	document.getElementById('button_up').addEventListener("click", function() {
-  		add_angle_to_rotation_matrix(5, Rotations.x);
-  		draw_things();
+		add_angle_to_rotation_matrix(ctx_cube, 5, Rotations.x);
+		draw_things_cube();
 	});
 	document.getElementById('button_down').addEventListener("click", function() {
-  		add_angle_to_rotation_matrix(- 5, Rotations.x);
-  		draw_things();
+		add_angle_to_rotation_matrix(ctx_cube, - 5, Rotations.x);
+		draw_things_cube();
 	});
 	document.getElementById('button_left').addEventListener("click", function() {
-  		add_angle_to_rotation_matrix(- 5, Rotations.y);
-  		draw_things();
+		add_angle_to_rotation_matrix(ctx_cube, - 5, Rotations.y);
+		draw_things_cube();
 	});
 	document.getElementById('button_right').addEventListener("click", function() {
-  		add_angle_to_rotation_matrix(5, Rotations.y);
-  		draw_things();
+		add_angle_to_rotation_matrix(ctx_cube, 5, Rotations.y);
+		draw_things_cube();
 	});
 	document.getElementById('button_a').addEventListener("click", function() {
-  		add_angle_to_rotation_matrix(- 5, Rotations.z);
-  		draw_things();
+		add_angle_to_rotation_matrix(ctx_cube, - 5, Rotations.z);
+		draw_things_cube();
 	});
 	document.getElementById('button_d').addEventListener("click", function() {
-  		add_angle_to_rotation_matrix(5, Rotations.z);
-  		draw_things();
+		add_angle_to_rotation_matrix(ctx_cube, 5, Rotations.z);
+		draw_things_cube();
+	});
+
+	document.getElementById('canvas_fdf').addEventListener("click", function() {
+		focus_fdf_canvas();
+	});
+
+	document.getElementById('canvas_cube').addEventListener("click", function() {
+		focus_cube_canvas();
+	});
+
+	/* detecting clicks outside of canvases */
+	document.addEventListener('click', function(event) {
+		if (document.getElementById('button_toggle_proj_fdf').contains(event.target)) {
+			return;
+		}
+		if (!document.getElementById('canvas_fdf').contains(event.target) && !document.getElementById('canvas_cube').contains(event.target)) {
+			unfocus_canvases();
+		}
+	});
+
+	function windowResize() {
+		set_fdf_ctx(false);
+		draw_things_fdf();
+
+		set_cube_ctx(false);
+		draw_things_cube();
+	};
+
+	window.addEventListener('resize', windowResize);
+
+	window.addEventListener("load", (event) => {
+		if (document.getElementById('map_file_input').files.length == 0) {
+			return;
+		}
+		let file = document.getElementById('map_file_input').files[0];
+		let reader = new FileReader();
+		reader.onload = function() {
+			//console.log(this.result);
+			ctx_fdf.map_struct = str_to_map(this.result);
+			draw_things_fdf();
+		}
+		reader.readAsText(file);
+
+		set_fdf_ctx(false);
+		draw_things_fdf();
+
+		set_cube_ctx(false);
+		draw_things_cube();
 	});
 </script>
 

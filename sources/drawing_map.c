@@ -21,7 +21,7 @@ void	draw_map(t_fdf *fdf)
 		size = ft_max_int(1, size - fdf->screen_info->pos_z);
 	int base_x = fdf->screen_info->width / 2 - fdf->map_struct->size_y * size / 2 + fdf->screen_info->pos_x;
 	int base_y = fdf->screen_info->height / 2 - fdf->map_struct->size_x * size / 2 + fdf->screen_info->pos_y;
-	int depth = fdf->screen_info->screen_depth + 100;
+	int depth = fdf->screen_info->screen_depth + 150;
 
 	t_vec3d *rotation_center_prev = new_vect3d(fdf->screen_info->rotation_center->x, fdf->screen_info->rotation_center->y, fdf->screen_info->rotation_center->z);
 	free(fdf->screen_info->rotation_center);
@@ -89,7 +89,7 @@ void	draw_map(t_fdf *fdf)
 		previous_point_x = 0;
 	}
 
-	draw_vect(fdf, fdf->screen_info->rotation_center, 0);
+	//draw_vect(fdf, fdf->screen_info->rotation_center, 0);
 	mlx_put_image_to_window(fdf->mlx, fdf->win, fdf->mlx_data->img, 0, 0);
 
 	free(fdf->screen_info->rotation_center);
