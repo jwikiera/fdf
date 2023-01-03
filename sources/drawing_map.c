@@ -40,7 +40,7 @@ void	draw_map(t_fdf *fdf)
 					connect_vects(fdf, proj1, proj2, 0x00000000);
 				free_vectors(proj1, proj2, 0, 0);
 			}
-			else if (previous_point_y && fdf->screen_info->projection == perspective)
+			else if (previous_point_y && fdf->screen_info->projection == perspective && pt_rotated->z > fdf->screen_info->screen_depth)
 			{
 				t_vec3d	*proj1 = project_perspective(previous_point_y, fdf->screen_info->screen_plane, fdf->screen_info);
 				t_vec3d *proj2 = project_perspective(pt, fdf->screen_info->screen_plane, fdf->screen_info);
@@ -62,6 +62,7 @@ void	draw_map(t_fdf *fdf)
 	for (int i = 0; i < fdf->map_struct->size_x; ++i) {
 		for (int j = 0; j < fdf->map_struct->size_y; ++j) {
 			t_vec3d *pt = new_vect3d(base_x + j * size, base_y + i * size, depth - fdf->map_struct->map[i][j] * fdf->map_struct->height_mult + fdf->screen_info->pos_z);
+			t_vec3d *pt_rotated = apply_rotation_matrix_to_point(pt, fdf->screen_info);
 			if (previous_point_x && fdf->screen_info->projection == orthogonal)
 			{
 				t_vec3d	*proj1 = project_orthogonal(previous_point_x, fdf->screen_info->screen_plane, fdf->screen_info);
@@ -70,7 +71,7 @@ void	draw_map(t_fdf *fdf)
 					connect_vects(fdf, proj1, proj2, 0x00000000);
 				free_vectors(proj1, proj2, 0, 0);
 			}
-			else if (previous_point_x && fdf->screen_info->projection == perspective && previous_point_x->z > fdf->screen_info->screen_depth + 10 && pt->z > fdf->screen_info->screen_depth + 10)
+			else if (previous_point_x && fdf->screen_info->projection == perspective && pt_rotated->z > fdf->screen_info->screen_depth)
 			{
 				t_vec3d	*proj1 = project_perspective(previous_point_x, fdf->screen_info->screen_plane, fdf->screen_info);
 				t_vec3d *proj2 = project_perspective(pt, fdf->screen_info->screen_plane, fdf->screen_info);
@@ -81,6 +82,7 @@ void	draw_map(t_fdf *fdf)
 			free(previous_point_x);
 			previous_point_x = new_vect3d(pt->x, pt->y, pt->z);
 			free(pt);
+			free(pt_rotated);
 		}
 		if (previous_point_x)
 			free(previous_point_x);
