@@ -86,7 +86,8 @@ OBJS_VEC			:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJS_VEC_LIST))
 
 OWN_DIR				:= $(SOURCES_DIRECTORY)own/
 SRCS_OWN_LIST		:= ft_str_starts_ends_with.c\
-						ft_realloc.c
+						ft_realloc.c\
+						color.c
 OBJS_OWN_LIST		:= $(patsubst %.c, %.o, $(SRCS_OWN_LIST))
 OBJS_OWN			:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJS_OWN_LIST))
 

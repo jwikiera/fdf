@@ -62,7 +62,11 @@ SOURCES_LIST			:= main.c\
 							draw_cube.c\
 							print_util.c\
 							set_screen_info.c\
-							screen_plane.c
+							screen_plane.c\
+							keyhandler.c\
+							drawing_map.c\
+							init.c\
+							arg_handler.c
 SOURCES					:= $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
 
 OBJECTS_DIRECTORY		:= objects/

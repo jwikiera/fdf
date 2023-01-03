@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   vect.c                                             :+:      :+:    :+:   */
+/*   arg_handler.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jwikiera <jwikiera@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,23 +12,18 @@
 
 #include "fdf.h"
 
-void	draw_vect(t_fdf *fdf, t_vec3d *vect, int color)
+int	handle_args(int argc, char *argv[])
 {
-	const int circle_data[3] = {vect->x, vect->y, 5};
-
-	circle_bres(fdf, circle_data, color);
-}
-
-void	connect_vects(t_fdf *fdf, t_vec3d *v1, t_vec3d *v2, int color)
-{
-	const int line_coords[4] = {v1->x, v1->y, v2->x, v2->y};
-
-	draw_line_dda(fdf, line_coords, color);
-}
-
-void	connect_vects_color(t_fdf *fdf, t_vec3d *v1, t_vec3d *v2, int colors[2])
-{
-	const int line_coords[4] = {v1->x, v1->y, v2->x, v2->y};
-
-	draw_line_dda_colors(fdf, line_coords, colors);
+	if (argc != 2)
+	{
+		ft_printf("Please pass exactly one file as parameter!\n");
+		return (2);
+	}
+	if (!ft_str_endswith(argv[1], ".fdf"))
+	{
+		ft_printf("File extension is not fdf!\n");
+		return (3);
+	}
+	ft_printf("File: %s\n", argv[1]);
+	return (0);
 }

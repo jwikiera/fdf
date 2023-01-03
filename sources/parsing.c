@@ -27,7 +27,8 @@ void	*free_map_gnlstr(t_map_struct *map_struct, char *gnl_str)
 		free(map_struct->map[i]);
 		i ++;
 	}
-	//free(map_struct);
+	free(map_struct->map);
+	free(map_struct);
 	return (NULL);
 }
 
@@ -56,6 +57,27 @@ void	free_sp(char **split, size_t len)
 	free(split);
 }
 
+void	set_extremes(t_map_struct *map_struct)
+{
+	int	max;
+	int	min;
+
+	if (!map_struct)
+		return ;
+	max = 0;
+	min = 0;
+	for (int i = 0; i < map_struct->size_y; i ++) {
+		for (int j = 0; j < map_struct->size_x; j ++) {
+			if (map_struct->map[j][i] > max)
+				max = map_struct->map[j][i];
+			else if (map_struct->map[j][i] < min)
+				min = map_struct->map[j][i];
+		}
+	}
+	map_struct->min_height = min;
+	map_struct->max_height = max;
+}
+
 t_map_struct	*map_from_fd(const char *filename)
 {
 	t_map_struct	*res;
@@ -80,7 +102,7 @@ t_map_struct	*map_from_fd(const char *filename)
 		gnl_str = get_next_line(fd_i[0]);
 		if (!gnl_str)
 		{
-			ft_printf("Loading done!\n");
+			ft_printf("Loading done! Map size: %d x %d\n", res->size_x, res->size_y);
 			return (res);
 		}
 		old_gnl = gnl_str;
@@ -88,7 +110,13 @@ t_map_struct	*map_from_fd(const char *filename)
 		free(old_gnl);
 		if (!gnl_str)
 			return (res);
-		res->size_y = count_words(gnl_str, ' ');
+		if (res->size_y == 0)
+			res->size_y = count_words(gnl_str, ' ');
+		if (count_words(gnl_str, ' ') != res->size_y)
+		{
+			ft_printf("Error while loading map, row size is different from the first one! (row %d)\n", res->size_x + 1);
+			return (free_map_gnlstr(res, gnl_str));
+		}
 		res->map = ft_realloc_int2darr(res->map, res->size_y, res->size_x, res->size_x + 1);
 		if (!res->map)
 			return (NULL);

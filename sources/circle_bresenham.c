@@ -16,16 +16,16 @@
  * Algorithm and implementation source:
  * https://www.geeksforgeeks.org/bresenhams-circle-drawing-algorithm/
  */
-void	draw_circle(t_data *data, const int coords[4], int color)
+void	draw_circle(t_fdf *fdf, const int coords[4], int color)
 {
-	my_mlx_pixel_put(data, coords[0] + coords[2], coords[1] + coords[3], color);
-	my_mlx_pixel_put(data, coords[0] - coords[2], coords[1] + coords[3], color);
-	my_mlx_pixel_put(data, coords[0] + coords[2], coords[1] - coords[3], color);
-	my_mlx_pixel_put(data, coords[0] - coords[2], coords[1] - coords[3], color);
-	my_mlx_pixel_put(data, coords[0] + coords[3], coords[1] + coords[2], color);
-	my_mlx_pixel_put(data, coords[0] - coords[3], coords[1] + coords[2], color);
-	my_mlx_pixel_put(data, coords[0] + coords[3], coords[1] - coords[2], color);
-	my_mlx_pixel_put(data, coords[0] - coords[3], coords[1] - coords[2], color);
+	my_mlx_pixel_put(fdf, coords[0] + coords[2], coords[1] + coords[3], color);
+	my_mlx_pixel_put(fdf, coords[0] - coords[2], coords[1] + coords[3], color);
+	my_mlx_pixel_put(fdf, coords[0] + coords[2], coords[1] - coords[3], color);
+	my_mlx_pixel_put(fdf, coords[0] - coords[2], coords[1] - coords[3], color);
+	my_mlx_pixel_put(fdf, coords[0] + coords[3], coords[1] + coords[2], color);
+	my_mlx_pixel_put(fdf, coords[0] - coords[3], coords[1] + coords[2], color);
+	my_mlx_pixel_put(fdf, coords[0] + coords[3], coords[1] - coords[2], color);
+	my_mlx_pixel_put(fdf, coords[0] - coords[3], coords[1] - coords[2], color);
 }
 
 void	set_y_d(int *y, int *d, int valy, int vald)
@@ -35,7 +35,7 @@ void	set_y_d(int *y, int *d, int valy, int vald)
 }
 
 /* details: x, y, radius */
-void	circle_bres(t_data *data, const int circle_details[3], int color)
+void	circle_bres(t_fdf *fdf, const int circle_details[3], int color)
 {
 	int	x;
 	int	y;
@@ -48,7 +48,7 @@ void	circle_bres(t_data *data, const int circle_details[3], int color)
 	coords[1] = circle_details[1];
 	coords[2] = x;
 	coords[3] = y;
-	draw_circle(data, coords, color);
+	draw_circle(fdf, coords, color);
 	while (y >= x)
 	{
 		x ++;
@@ -58,6 +58,6 @@ void	circle_bres(t_data *data, const int circle_details[3], int color)
 			d = d + 4 * x + 6;
 		coords[2] = x;
 		coords[3] = y;
-		draw_circle(data, coords, color);
+		draw_circle(fdf, coords, color);
 	}
 }

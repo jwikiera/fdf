@@ -12,18 +12,18 @@
 
 #include "fdf.h"
 
-void	fill_screen(t_data *data, int color)
+void	fill_screen(t_fdf *fdf, int color)
 {
 	int	i;
 	int	j;
 
 	i = 0;
-	while (i < data->screen_info->width)
+	while (i < fdf->screen_info->width)
 	{
 		j = 0;
-		while (j < data->screen_info->height)
+		while (j < fdf->screen_info->height)
 		{
-			my_mlx_pixel_put(data, i, j, color);
+			my_mlx_pixel_put(fdf, i, j, color);
 			j ++;
 		}
 		i ++;
@@ -31,7 +31,7 @@ void	fill_screen(t_data *data, int color)
 }
 
 /* square_details: x, y, width, height */
-void	draw_square(t_data *data, const int square_details[4], int color)
+void	draw_square(t_fdf *fdf, const int square_details[4], int color)
 {
 	const int	line_coords1[4] = {square_details[0], square_details[1],
 		square_details[0] + square_details[2], square_details[1]};
@@ -45,8 +45,8 @@ void	draw_square(t_data *data, const int square_details[4], int color)
 		square_details[1] + square_details[3],
 		square_details[0], square_details[1]};
 
-	draw_line_dda(data, line_coords1, color);
-	draw_line_dda(data, line_coords2, color);
-	draw_line_dda(data, line_coords3, color);
-	draw_line_dda(data, line_coords4, color);
+	draw_line_dda(fdf, line_coords1, color);
+	draw_line_dda(fdf, line_coords2, color);
+	draw_line_dda(fdf, line_coords3, color);
+	draw_line_dda(fdf, line_coords4, color);
 }

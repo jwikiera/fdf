@@ -99,6 +99,13 @@ double		sin_approx(double angle);
 double		tan_approx(double angle);
 double		deg_to_rad(double angle);
 
+/* minilibx color */
+int			argb_to_int(int a, int r, int g, int b);
+int			get_a(int argb);
+int			get_r(int argb);
+int			get_g(int argb);
+int			get_b(int argb);
+
 /* vector */
 typedef struct s_vec2d
 {
@@ -197,6 +204,8 @@ void		invert_vec_inplace(t_vec3d *v);
 
 t_vec3d		*cross(t_vec3d *v1, t_vec3d *v2);
 
+t_vec3d		*apply_rotation_matrix_to_point(t_vec3d *point,
+										   t_screen_info *screen_info);
 t_vec3d		*project_perspective(t_vec3d *point, t_plane3d *plane,
 				t_screen_info *screen_info);
 t_vec3d		*project_orthogonal(t_vec3d *point, t_plane3d *plane,

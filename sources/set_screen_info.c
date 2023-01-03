@@ -16,7 +16,7 @@ t_screen_info	*screen_info_init()
 {
 	t_screen_info	*screen_info;
 
-	screen_info = malloc(sizeof(t_screen_info));
+	screen_info = malloc(sizeof(*screen_info));
 	if (!screen_info)
 		return (NULL);
 	screen_info->pos_x = 0;
