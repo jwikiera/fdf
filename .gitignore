@@ -7,5 +7,8 @@ objects
 fdf
 *.swiftdoc
 *.swiftmodule
+*.dSYM
+*.dSYM/
+*.dSYM/*
 artix_pull
 artix_push
