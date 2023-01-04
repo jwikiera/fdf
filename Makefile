@@ -108,6 +108,7 @@ clean:
 	@$(MAKE) -sC $(LIBFT_DIRECTORY) clean
 	@$(MAKE) -sC $(MINILIBX_DIRECTORY) clean
 	@rm -rf $(OBJECTS_DIRECTORY)
+	@rm -rf *.dSYM
 	@echo "$(NAME): $(RED)$(OBJECTS_DIRECTORY) was deleted$(RESET)"
 	@echo "$(NAME): $(RED)object files were deleted$(RESET)"
 

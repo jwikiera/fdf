@@ -550,26 +550,71 @@
 
 		let rotation_center_prev = new Vect3d(ctx.rotation_center.x, ctx.rotation_center.y, ctx.rotation_center.z);
 		ctx.rotation_center = new Vect3d(base_x + ctx.map_struct.size_y * size / 2 - size / 2, base_y + ctx.map_struct.size_x * size / 2 - size / 2, depth + ctx.pos_z);
+		/*
 		let previous_point_y = null;
+		let proj_map = [];
 		for (let i = 0; i < ctx.map_struct.size_y; i ++) {
+			proj_map[i] = [];
 			for (let j = 0; j < ctx.map_struct.size_x; j ++) {
 				let pt = new Vect3d(base_x + i * size, base_y + j * size, depth - ctx.map_struct.map[j][i] * ctx.height_mult + ctx.pos_z);
 				let pt_rotated = apply_rotation_matrix_to_point(ctx, pt);
 				if (previous_point_y != null && ctx.projection == Projections.orthogonal) {
 					let proj1 = point_projection_orthogonal(ctx, previous_point_y, ctx.screen_plane);
+					proj_map[i][j] = proj1;
 					let proj2 = point_projection_orthogonal(ctx, pt, ctx.screen_plane);
 					connect_vects(ctx, proj1, proj2, false);
 				} else if (previous_point_y != null && ctx.projection == Projections.perspective && pt_rotated.z > ctx.plane_depth) {
 					let proj1 = point_projection(ctx, previous_point_y, ctx.screen_plane);
+					proj_map[i][j] = proj1;
 					let proj2 = point_projection(ctx, pt, ctx.screen_plane);
 					connect_vects(ctx, proj1, proj2, false);
 				}
 				previous_point_y = new Vect3d(pt.x, pt.y, pt.z);
 			}
 			previous_point_y = null;
+		}*/
+
+		let proj_map = [];
+		for (let i = 0; i < ctx.map_struct.size_y; i ++) {
+			proj_map[i] = [];
+			for (let j = 0; j < ctx.map_struct.size_x; j++) {
+				let pt = new Vect3d(base_x + i * size, base_y + j * size, depth - ctx.map_struct.map[j][i] * ctx.height_mult + ctx.pos_z);
+				let pt_rotated = apply_rotation_matrix_to_point(ctx, pt);
+				if (ctx.projection == Projections.orthogonal) {
+					proj_map[i][j] = point_projection_orthogonal(ctx, pt, ctx.screen_plane);
+				} else if (ctx.projection == Projections.perspective && pt_rotated.z > ctx.plane_depth) {
+					proj_map[i][j] = point_projection(ctx, pt, ctx.screen_plane);
+				} else {
+					proj_map[i][j] = null;
+				}
+			}
 		}
 
-		let previous_point_x = null;
+		let previous_point = null;
+		for (let i = 0; i < proj_map.length; i ++) {
+			for (let j = 0; j < proj_map[j].length; j ++) {
+				let proj2 = proj_map[i][j];
+				if (proj2 && previous_point) {
+					connect_vects(ctx, previous_point, proj2, false);
+				}
+				previous_point = proj2;
+			}
+			previous_point = null;
+		}
+
+		previous_point = null;
+		for (let i = 0; i < proj_map[0].length; i ++) {
+			for (let j = 0; j < proj_map.length; j ++) {
+				let proj2 = proj_map[j][i];
+				if (proj2 && previous_point) {
+					connect_vects(ctx, previous_point, proj2, false);
+				}
+				previous_point = proj2;
+			}
+			previous_point = null;
+		}
+
+		/*let previous_point_x = null;
 		for (let i = 0; i < ctx.map_struct.size_x; ++i) {
 			for (let j = 0; j < ctx.map_struct.size_y; ++j) {
 				let pt = new Vect3d(base_x + j * size, base_y + i * size, depth - ctx.map_struct.map[i][j] * ctx.height_mult + ctx.pos_z);
@@ -586,7 +631,7 @@
 				previous_point_x = new Vect3d(pt.x, pt.y, pt.z);
 			}
 			previous_point_x = null;
-		}
+		}*/
 	}
 </script>
 
@@ -1004,16 +1049,18 @@
 
 	window.addEventListener("load", (event) => {
 		if (document.getElementById('map_file_input').files.length == 0) {
-			return;
+
+		} else {
+			let file = document.getElementById('map_file_input').files[0];
+			let reader = new FileReader();
+			reader.onload = function() {
+				//console.log(this.result);
+				ctx_fdf.map_struct = str_to_map(this.result);
+				draw_things_fdf();
+			}
+			reader.readAsText(file);
 		}
-		let file = document.getElementById('map_file_input').files[0];
-		let reader = new FileReader();
-		reader.onload = function() {
-			//console.log(this.result);
-			ctx_fdf.map_struct = str_to_map(this.result);
-			draw_things_fdf();
-		}
-		reader.readAsText(file);
+
 
 		set_fdf_ctx(false);
 		draw_things_fdf();
