@@ -12,7 +12,7 @@
 
 #include "fdf.h"
 
-t_screen_info	*screen_info_init()
+t_screen_info	*screen_info_init(void)
 {
 	t_screen_info	*screen_info;
 
@@ -26,12 +26,14 @@ t_screen_info	*screen_info_init()
 	screen_info->zoom_speed = 5;
 	screen_info->width = 1920;
 	screen_info->height = 1080;
-	screen_info->rotation_matrix = new_matrix(new_vect3d(1, 0, 0), new_vect3d(0, 1, 0), new_vect3d(0, 0, 1));
+	screen_info->rotation_matrix = new_matrix(new_vect3d(1, 0, 0),
+			new_vect3d(0, 1, 0), new_vect3d(0, 0, 1));
 	screen_info->rotation_center = new_vect3d(0, 0, 0);
 	screen_info->rotation_speed = 5;
 	screen_info->eye_z = 0;
 	screen_info->screen_depth = 200;
-	screen_info->screen_plane = get_screen_plane(screen_info->width, screen_info->height, screen_info->screen_depth);
+	screen_info->screen_plane = get_screen_plane(screen_info->width,
+			screen_info->height, screen_info->screen_depth);
 	screen_info->background_color = 0x00FFFFFF;
 	screen_info->projection = orthogonal;
 	return (screen_info);

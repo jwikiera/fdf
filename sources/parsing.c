@@ -15,79 +15,25 @@
 #include "fdf.h"
 #include "get_next_line.h"
 
-void	*free_map_gnlstr(t_map_struct *map_struct, char *gnl_str)
+char	*gnl_trim(int fd)
 {
-	int i;
+	char	*res;
+	char	*gnl_res;
 
-	if (gnl_str)
-		free(gnl_str);
-	i = 0;
-	while (i < map_struct->size_x)
-	{
-		free(map_struct->map[i]);
-		i ++;
-	}
-	free(map_struct->map);
-	free(map_struct);
-	return (NULL);
+	gnl_res = get_next_line(fd);
+	if (!gnl_res)
+		return (NULL);
+	res = ft_strtrim(gnl_res, "\n");
+	free(gnl_res);
+	return (res);
 }
 
-void	free_map_members(t_map_struct *map_struct)
-{
-	int i;
-
-	i = 0;
-	while (i < map_struct->size_x)
-	{
-		free(map_struct->map[i]);
-		i ++;
-	}
-}
-
-void	free_sp(char **split, size_t len)
-{
-	size_t	i;
-
-	i = 0;
-	while(i < len)
-	{
-		free(split[i]);
-		i ++;
-	}
-	free(split);
-}
-
-void	set_extremes(t_map_struct *map_struct)
-{
-	int	max;
-	int	min;
-
-	if (!map_struct)
-		return ;
-	max = 0;
-	min = 0;
-	for (int i = 0; i < map_struct->size_y; i ++) {
-		for (int j = 0; j < map_struct->size_x; j ++) {
-			if (map_struct->map[j][i] > max)
-				max = map_struct->map[j][i];
-			else if (map_struct->map[j][i] < min)
-				min = map_struct->map[j][i];
-		}
-	}
-	map_struct->min_height = min;
-	map_struct->max_height = max;
-}
-
-t_map_struct	*map_from_fd(const char *filename)
+t_map_struct	*init(const char *filename, int *fd)
 {
 	t_map_struct	*res;
-	int				fd_i[2];
-	char			*gnl_str;
-	char 			*old_gnl;
-	char			**split_res;
 
 	ft_printf("Loading %s, please wait...\n", filename);
-	fd_i[0] = open(filename, O_RDONLY);
+	*fd = open(filename, O_RDONLY);
 	res = malloc(sizeof(*res));
 	if (!res)
 		return (NULL);
@@ -97,42 +43,76 @@ t_map_struct	*map_from_fd(const char *filename)
 	res->size_x = 0;
 	res->size_y = 0;
 	res->height_mult = 10;
+	return (res);
+}
+
+int	map_from_fd_2(t_map_struct	*res, char *gnl_str)
+{
+	char			**split_res;
+	int				i;
+
+	res->map = ft_realloc_int2darr(res->map, res->size_y, res->size_x,
+			res->size_x + 1);
+	if (!res->map)
+		return (0);
+	split_res = ft_split(gnl_str, ' ');
+	if (!split_res)
+	{
+		free_map_gnlstr(res, gnl_str);
+		return (0);
+	}
+	i = 0;
+	while (i < count_words(gnl_str, ' '))
+	{
+		res->map[res->size_x][i] = ft_atoi(split_res[i]);
+		i ++;
+	}
+	res->size_x ++;
+	free_sp(split_res, count_words(gnl_str, ' '));
+	free(gnl_str);
+	gnl_str = 0;
+	return (1);
+}
+
+void	print_msg(int type, t_map_struct *map_struct)
+{
+	if (type == 0)
+	{
+		ft_printf("Loading done! Map size: %d x %d\n",
+			map_struct->size_x, map_struct->size_y);
+	}
+	else
+	{
+		ft_printf("Error while loading map, row size is different"
+			"from the first one! (row %d)\n", map_struct->size_x + 1);
+	}
+}
+
+t_map_struct	*map_from_fd(const char *filename)
+{
+	t_map_struct	*res;
+	int				fd;
+	char			*gnl_str;
+
+	res = init(filename, &fd);
+	if (!res)
+		return (NULL);
 	while (1)
 	{
-		gnl_str = get_next_line(fd_i[0]);
+		gnl_str = gnl_trim(fd);
 		if (!gnl_str)
 		{
-			ft_printf("Loading done! Map size: %d x %d\n", res->size_x, res->size_y);
+			print_msg(0, res);
 			return (res);
 		}
-		old_gnl = gnl_str;
-		gnl_str = ft_strtrim(gnl_str, "\n");
-		free(old_gnl);
-		if (!gnl_str)
-			return (res);
 		if (res->size_y == 0)
 			res->size_y = count_words(gnl_str, ' ');
 		if (count_words(gnl_str, ' ') != res->size_y)
 		{
-			ft_printf("Error while loading map, row size is different from the first one! (row %d)\n", res->size_x + 1);
+			print_msg(1, res);
 			return (free_map_gnlstr(res, gnl_str));
 		}
-		res->map = ft_realloc_int2darr(res->map, res->size_y, res->size_x, res->size_x + 1);
-		if (!res->map)
-			return (NULL);
-		//res->map[res->size_x] = malloc(sizeof(*(res->map)) * count_words(gnl_str, ' '));
-		split_res = ft_split(gnl_str, ' ');
-		if (!split_res)
+		if (!map_from_fd_2(res, gnl_str))
 			return (free_map_gnlstr(res, gnl_str));
-		fd_i[1] = 0;
-		while (fd_i[1] < count_words(gnl_str, ' '))
-		{
-			res->map[res->size_x][fd_i[1]] = ft_atoi(split_res[fd_i[1]]);
-			fd_i[1] ++;
-		}
-		res->size_x ++;
-		free_sp(split_res, count_words(gnl_str, ' '));
-		free(gnl_str);
-		gnl_str = 0;
 	}
 }

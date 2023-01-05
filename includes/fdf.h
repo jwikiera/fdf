@@ -96,11 +96,13 @@ typedef struct s_map_struct {
 	int	**map;
 	int	size_x;
 	int	size_y;
-	int rect_size_x;
-	int rect_size_y;
-	int height_mult;
-	int pos_x;
-	int pos_y;
+	int	rect_size;
+	int	rect_size_x;
+	int	rect_size_y;
+	int	height_mult;
+	int	pos_x;
+	int	pos_y;
+	int	pos_z;
 	int	min_height;
 	int	max_height;
 }	t_map_struct;
@@ -136,22 +138,27 @@ void			my_mlx_pixel_put(t_fdf *fdf, int x, int y, int color);
 
 /* drawing */
 void			draw_line_dda(t_fdf *fdf, const int coords[4], int color);
-void			draw_line_dda_colors(t_fdf *fdf, const int coords[4], int colors[2]);
+void			draw_line_dda_colors(t_fdf *fdf,
+					const int coords[4], int colors[2]);
 void			fill_screen(t_fdf *fdf, int color);
 void			draw_square(t_fdf *fdf, const int square_details[4], int color);
 void			circle_bres(t_fdf *fdf, const int circle_details[3], int color);
 void			draw_vect(t_fdf *fdf, t_vec3d *vect, int color);
 void			connect_vects(t_fdf *fdf, t_vec3d *v1, t_vec3d *v2, int color);
 
-void			draw_cube(t_fdf *fdf, t_plane3d *plane, int x, int y, int z, int size, int color);
-void			draw_cube_orthogonal(t_fdf *fdf, t_plane3d *plane, int x, int y, int z, int size, int color);
+/*void			draw_cube(t_fdf *fdf, t_plane3d *plane, int x, int y,
+					int z, int size, int color);
+void			draw_cube_orthogonal(t_fdf *fdf, t_plane3d *plane, int x,
+					int y, int z, int size, int color);
+					*/
 void			draw_map(t_fdf *fdf);
 
 /* other util */
-void			print_title();
+void			print_title(void);
 void			print_map(t_map_struct *map);
-t_plane3d		*get_screen_plane(int width, int height, int spectator_distance);
-t_screen_info	*screen_info_init();
+t_plane3d		*get_screen_plane(int width, int height,
+					int spectator_distance);
+t_screen_info	*screen_info_init(void);
 void			*free_map_gnlstr(t_map_struct *map_struct, char *gnl_str);
 void			free_map_members(t_map_struct *map_struct);
 int				handle_keypress(int keycode, t_fdf *fdf);
@@ -159,5 +166,10 @@ t_fdf			*init_fdf(char *argv[]);
 int				post_init(t_fdf *fdf, char *argv[]);
 int				handle_args(int argc, char *argv[]);
 int				destroy(t_fdf *fdf);
+t_vec3d			***get_proj_map(t_fdf *fdf);
+void			*free_proj_map(t_vec3d ***res, int sizey,
+					int sizex, int sizelast);
+
+void			free_sp(char **split, size_t len);
 
 #endif

@@ -1,3 +1,17 @@
+<!--
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   fdf.html                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jwikiera <jwikiera@student.42lausan>       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2022/10/20 11:12:16 by jwikiera          #+#    #+#             */
+/*   Updated: 2022/10/20 11:12:18 by jwikiera         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+-->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -175,6 +189,9 @@
 		}
 	}
 
+	/* Class holding a canvas, canvas context, the rotation matrix, and some more vars that would be global
+	* It has no fixed members because the fdf context has extra vars
+	*  */
 	class Context {
 
 	}
@@ -189,6 +206,8 @@
 
 <!-- FDF SPECIFIC CLASSES AND ENUMS -->
 <script>
+	/* The map object. The size ints are an artifact of porting C code but are also useful when porting optimizations
+	* back to the C version */
 	class Map {
 		constructor(size_x, size_y, map) {
 			this.size_x = size_x;
@@ -197,7 +216,7 @@
 		}
 	}
 
-	/* Rotation axis enum */
+	/* Projections enum */
 	const Projections = {
 		orthogonal: 0,
 		perspective: 1
@@ -484,18 +503,21 @@
 		}
 	}
 
+	/* Focusing the fdf demo canvas */
 	function focus_fdf_canvas() {
 		selected_canvas = Canvases.fdf;
 		document.getElementById('canvas_fdf').style.borderWidth = "5px";
 		document.getElementById('canvas_cube').style.borderWidth = "1px";
 	}
 
+	/* Focusing the cube demo canvas */
 	function focus_cube_canvas() {
 		selected_canvas = Canvases.cube;
 		document.getElementById('canvas_cube').style.borderWidth = "5px";
 		document.getElementById('canvas_fdf').style.borderWidth = "1px";
 	}
 
+	/* Unfocuses all canvases */
 	function unfocus_canvases() {
 		document.getElementById('canvas_fdf').style.borderWidth = "1px";
 		document.getElementById('canvas_cube').style.borderWidth = "1px";
@@ -505,6 +527,7 @@
 
 <!-- FDF SPECIFIC FUNCS -->
 <script>
+	/* Parses a string into a map object */
 	function str_to_map(str) {
 		let res = new Map(0, 0, 0);
 		let map_ = [];
@@ -532,13 +555,16 @@
 		return res;
 	}
 
+	/* Multiplies a vector by the rotation matrix of the given context */
 	function apply_rotation_matrix_to_point(ctx, point) {
 		let res = vec_sub(point, ctx.rotation_center);
 		res = matrix_mult_vec(ctx.rotation_matrix, res);
 		return vec_add(res, ctx.rotation_center);
 	}
 
+	/* Draws the wireframe */
 	function draw_map(ctx) {
+		/* Calculating the initial model size and position */
 		let margin = ctx.canvas.height / 2.6;
 		let size = Math.max(Math.min((ctx.canvas.height - margin) / ctx.map_struct.size_x, (ctx.canvas.width - margin) / ctx.map_struct.size_y), 1);
 		if (ctx.projection == Projections.orthogonal) {
@@ -550,30 +576,8 @@
 
 		let rotation_center_prev = new Vect3d(ctx.rotation_center.x, ctx.rotation_center.y, ctx.rotation_center.z);
 		ctx.rotation_center = new Vect3d(base_x + ctx.map_struct.size_y * size / 2 - size / 2, base_y + ctx.map_struct.size_x * size / 2 - size / 2, depth + ctx.pos_z);
-		/*
-		let previous_point_y = null;
-		let proj_map = [];
-		for (let i = 0; i < ctx.map_struct.size_y; i ++) {
-			proj_map[i] = [];
-			for (let j = 0; j < ctx.map_struct.size_x; j ++) {
-				let pt = new Vect3d(base_x + i * size, base_y + j * size, depth - ctx.map_struct.map[j][i] * ctx.height_mult + ctx.pos_z);
-				let pt_rotated = apply_rotation_matrix_to_point(ctx, pt);
-				if (previous_point_y != null && ctx.projection == Projections.orthogonal) {
-					let proj1 = point_projection_orthogonal(ctx, previous_point_y, ctx.screen_plane);
-					proj_map[i][j] = proj1;
-					let proj2 = point_projection_orthogonal(ctx, pt, ctx.screen_plane);
-					connect_vects(ctx, proj1, proj2, false);
-				} else if (previous_point_y != null && ctx.projection == Projections.perspective && pt_rotated.z > ctx.plane_depth) {
-					let proj1 = point_projection(ctx, previous_point_y, ctx.screen_plane);
-					proj_map[i][j] = proj1;
-					let proj2 = point_projection(ctx, pt, ctx.screen_plane);
-					connect_vects(ctx, proj1, proj2, false);
-				}
-				previous_point_y = new Vect3d(pt.x, pt.y, pt.z);
-			}
-			previous_point_y = null;
-		}*/
 
+		/* Calculating the projection of each point for a given position, rotation, and projection type */
 		let proj_map = [];
 		for (let i = 0; i < ctx.map_struct.size_y; i ++) {
 			proj_map[i] = [];
@@ -590,6 +594,7 @@
 			}
 		}
 
+		/* Traversing the projection array two times and connecting the vertices to obtain the final grid */
 		let previous_point = null;
 		for (let i = 0; i < proj_map.length; i ++) {
 			for (let j = 0; j < proj_map[j].length; j ++) {
@@ -601,7 +606,6 @@
 			}
 			previous_point = null;
 		}
-
 		previous_point = null;
 		for (let i = 0; i < proj_map[0].length; i ++) {
 			for (let j = 0; j < proj_map.length; j ++) {
@@ -613,25 +617,6 @@
 			}
 			previous_point = null;
 		}
-
-		/*let previous_point_x = null;
-		for (let i = 0; i < ctx.map_struct.size_x; ++i) {
-			for (let j = 0; j < ctx.map_struct.size_y; ++j) {
-				let pt = new Vect3d(base_x + j * size, base_y + i * size, depth - ctx.map_struct.map[i][j] * ctx.height_mult + ctx.pos_z);
-				let pt_rotated = apply_rotation_matrix_to_point(ctx, pt);
-				if (previous_point_x != null && ctx.projection == Projections.orthogonal) {
-					let proj1 = point_projection_orthogonal(ctx, previous_point_x, ctx.screen_plane);
-					let proj2 = point_projection_orthogonal(ctx, pt, ctx.screen_plane);
-					connect_vects(ctx, proj1, proj2, false);
-				} else if (previous_point_x && ctx.projection == Projections.perspective && pt_rotated.z > ctx.plane_depth) {
-					let proj1 = point_projection(ctx, previous_point_x, ctx.screen_plane);
-					let proj2 = point_projection(ctx, pt, ctx.screen_plane);
-					connect_vects(ctx, proj1, proj2, false);
-				}
-				previous_point_x = new Vect3d(pt.x, pt.y, pt.z);
-			}
-			previous_point_x = null;
-		}*/
 	}
 </script>
 

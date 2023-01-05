@@ -54,6 +54,7 @@ SOURCES_DIRECTORY		:= ./sources/
 SOURCES_LIST			:= main.c\
 							color.c\
 							parsing.c\
+							parsing2.c\
 							drawing.c\
 							mlx_helpers.c\
 							draw_line.c\
@@ -66,14 +67,19 @@ SOURCES_LIST			:= main.c\
 							keyhandler.c\
 							drawing_map.c\
 							init.c\
-							arg_handler.c
+							arg_handler.c\
+							get_proj_map.c
 SOURCES					:= $(addprefix $(SOURCES_DIRECTORY), $(SOURCES_LIST))
+HEADER_LIST				:= fdf.h
+HEADER_FILES			:= $(addprefix $(INCLUDE_DIR), $(HEADER_LIST))
 
 OBJECTS_DIRECTORY		:= objects/
 OBJECTS_LIST			:= $(patsubst %.c, %.o, $(SOURCES_LIST))
 OBJECTS					:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
 
 .PHONY: all clean fclean re docker_build docker_run docker_clean
+
+all: $(NAME)
 
 $(OBJECTS_DIRECTORY):
 	mkdir -p $(OBJECTS_DIRECTORY)
@@ -98,9 +104,7 @@ $(MINILIBX):
 	cd $(MINILIBX_DIRECTORY) && $(MAKE)
 	cp $(MINILIBX) .
 
-all: $(NAME)
-
-$(NAME): $(LIBFT) $(LIBPRINTF) $(MINILIBX) $(OBJECTS_DIRECTORY) $(OBJECTS)
+$(NAME): $(LIBFT) $(LIBPRINTF) $(MINILIBX) $(OBJECTS_DIRECTORY) $(OBJECTS) $(HEADER_FILES)
 	$(CC) $(CFLAGS) $(OBJECTS) $(LIBRARIES) $(INCLUDES) -o $(NAME)
 
 clean:

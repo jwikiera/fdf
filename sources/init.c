@@ -56,7 +56,21 @@ t_fdf	*init_fdf(char *argv[])
 
 int	post_init_two(t_fdf *fdf)
 {
-	(void) fdf;
+	fdf->mlx_data->img = mlx_new_image(fdf->mlx, fdf->screen_info->width,
+			fdf->screen_info->height);
+	if (!fdf->mlx_data->img)
+	{
+		free_map_gnlstr(fdf->map_struct, 0);
+		return (0);
+	}
+	fdf->mlx_data->addr = mlx_get_data_addr(fdf->mlx_data->img,
+			&fdf->mlx_data->bits_per_pixel, &fdf->mlx_data->line_length,
+			&fdf->mlx_data->endian);
+	if (!fdf->mlx_data->addr)
+	{
+		free_map_gnlstr(fdf->map_struct, 0);
+		return (0);
+	}
 	return (1);
 }
 
@@ -72,7 +86,8 @@ int	post_init(t_fdf *fdf, char *argv[])
 		free_map_gnlstr(fdf->map_struct, 0);
 		return (0);
 	}
-	fdf->win = mlx_new_window(fdf->mlx, fdf->screen_info->width, fdf->screen_info->height, fdf->screen_title);
+	fdf->win = mlx_new_window(fdf->mlx, fdf->screen_info->width,
+			fdf->screen_info->height, fdf->screen_title);
 	if (!fdf->win)
 	{
 		free_map_gnlstr(fdf->map_struct, 0);
@@ -80,18 +95,6 @@ int	post_init(t_fdf *fdf, char *argv[])
 	}
 	fdf->mlx_data = malloc(sizeof(*fdf->mlx_data));
 	if (!fdf->mlx_data)
-	{
-		free_map_gnlstr(fdf->map_struct, 0);
-		return (0);
-	}
-	fdf->mlx_data->img = mlx_new_image(fdf->mlx, fdf->screen_info->width, fdf->screen_info->height);
-	if (!fdf->mlx_data->img)
-	{
-		free_map_gnlstr(fdf->map_struct, 0);
-		return (0);
-	}
-	fdf->mlx_data->addr = mlx_get_data_addr(fdf->mlx_data->img, &fdf->mlx_data->bits_per_pixel, &fdf->mlx_data->line_length, &fdf->mlx_data->endian);
-	if (!fdf->mlx_data->addr)
 	{
 		free_map_gnlstr(fdf->map_struct, 0);
 		return (0);

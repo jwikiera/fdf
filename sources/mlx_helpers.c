@@ -21,6 +21,7 @@ void	my_mlx_pixel_put(t_fdf *fdf, int x, int y, int color)
 	{
 		return ;
 	}
-	dst = fdf->mlx_data->addr + (y * fdf->mlx_data->line_length + x * (fdf->mlx_data->bits_per_pixel / 8));
-	*(unsigned int*)dst = color;
+	dst = fdf->mlx_data->addr + (y * fdf->mlx_data->line_length
+			+ x * (fdf->mlx_data->bits_per_pixel / 8));
+	*(unsigned int *)dst = color;
 }

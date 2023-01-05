@@ -91,12 +91,15 @@ SRCS_OWN_LIST		:= ft_str_starts_ends_with.c\
 OBJS_OWN_LIST		:= $(patsubst %.c, %.o, $(SRCS_OWN_LIST))
 OBJS_OWN			:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJS_OWN_LIST))
 
+INCLUDE_DIR			:= ./includes/
+
+HEADER_LIST			:= get_next_line.h\
+						libft.h
+HEADER_FILES		:= $(addprefix $(INCLUDE_DIR), $(HEADER_LIST))
 
 ALL_SRCS_LIST		:= $(SRCS_BONUS_LIST) $(SRCS_GNL_LIST) $(SRCS_MANDATORY_LIST) $(SRCS_MATH_LIST) $(SRCS_OWN_LIST) $(SRCS_VEC_LIST)
 OBJECTS_LIST		:= $(patsubst %.c, %.o, $(ALL_SRCS_LIST))
 OBJECTS				:= $(addprefix $(OBJECTS_DIRECTORY), $(OBJECTS_LIST))
-
-INCLUDE_DIR			:= ./includes/
 
 GNL_BUFFER_FLAG		:= -D BUFFER_SIZE=1000
 
@@ -135,7 +138,7 @@ $(OBJECTS_DIRECTORY)%.o : $(OWN_DIR)%.c $(HEADERS)
 $(OBJECTS_DIRECTORY)%.o : $(VEC_DIR)%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $(INCLUDES) $< -o $@
 
-$(NAME): $(OBJECTS_DIRECTORY) $(OBJECTS)
+$(NAME): $(OBJECTS_DIRECTORY) $(OBJECTS) $(HEADER_FILES)
 	$(LIBC) $(NAME) $(OBJECTS)
 	$(LIBR) $(NAME)
 

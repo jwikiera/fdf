@@ -12,7 +12,7 @@
 
 #include "fdf.h"
 
-int destroy(t_fdf *fdf)
+int	destroy(t_fdf *fdf)
 {
 	if (!fdf)
 		exit(0);
@@ -37,7 +37,7 @@ int destroy(t_fdf *fdf)
 	exit(0);
 }
 
-int main(int argc, char *argv[])
+int	main(int argc, char *argv[])
 {
 	t_fdf	*fdf;
 	int		arg_handle_res;
@@ -52,9 +52,9 @@ int main(int argc, char *argv[])
 	if (!post_init(fdf, argv))
 		destroy(fdf);
 	add_angle_to_rotation_matrix(fdf->screen_info->rotation_matrix,
-			-35, axis_x, 0);
+		-35, axis_x, 0);
 	add_angle_to_rotation_matrix(fdf->screen_info->rotation_matrix,
-			45, axis_z, 0);
+		45, axis_z, 0);
 	draw_map(fdf);
 	mlx_hook(fdf->win, ON_KEYDOWN, 1L << 0, handle_keypress, fdf);
 	mlx_hook(fdf->win, ON_DESTROY, 0, destroy, fdf);
