@@ -597,7 +597,7 @@
 		/* Traversing the projection array two times and connecting the vertices to obtain the final grid */
 		let previous_point = null;
 		for (let i = 0; i < proj_map.length; i ++) {
-			for (let j = 0; j < proj_map[j].length; j ++) {
+			for (let j = 0; j < proj_map[0].length; j ++) {
 				let proj2 = proj_map[i][j];
 				if (proj2 && previous_point) {
 					connect_vects(ctx, previous_point, proj2, false);

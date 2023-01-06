@@ -139,3 +139,6 @@ re: fclean all
 
 norm:
 	norminette includes/ sources/ libs/libft/ libs/libprintf/
+
+funcs: $(NAME)
+	nm -u $(NAME)
