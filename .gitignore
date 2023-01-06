@@ -12,3 +12,4 @@ fdf
 *.dSYM/*
 artix_pull
 artix_push
+*.DS_Store
