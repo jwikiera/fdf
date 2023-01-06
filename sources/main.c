@@ -32,7 +32,6 @@ int	destroy(t_fdf *fdf)
 		free(fdf->screen_title);
 	if (fdf->screen_info)
 		free(fdf->screen_info);
-	mlx_destroy_window(fdf->mlx, fdf->win);
 	ft_printf("Exiting...\n");
 	exit(0);
 }

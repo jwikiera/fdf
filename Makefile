@@ -136,3 +136,6 @@ docker_clean:
 	docker system prune -a --volumes
 
 re: fclean all
+
+norm:
+	norminette includes/ sources/ libs/libft/ libs/libprintf/

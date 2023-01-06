@@ -21,10 +21,7 @@ void	handle_keypress_2(int keycode, t_fdf *fdf)
 	else if (keycode == K_NUM_2)
 		fdf->screen_info->pos_y -= fdf->screen_info->mov_speed;
 	else if (keycode == K_NUM_8)
-	{
-		fdf->screen_info->pos_y += fdf->screen_info->mov_speed;
-		ft_printf("pressed k num 8!\n");
-	}
+	fdf->screen_info->pos_y += fdf->screen_info->mov_speed;
 	else if (keycode == K_MINUS || keycode == K_NUM_MINUS)
 		fdf->screen_info->pos_z += fdf->screen_info->zoom_speed;
 	else if (keycode == K_PLUS || keycode == K_NUM_PLUS)
@@ -40,7 +37,7 @@ void	handle_keypress_2(int keycode, t_fdf *fdf)
 int	handle_keypress(int keycode, t_fdf *fdf)
 {
 	if (keycode == K_ESC)
-		destroy(fdf);
+		mlx_destroy_window(fdf->mlx, fdf->win);
 	if (keycode == K_RIGHT)
 		add_angle_to_rotation_matrix(fdf->screen_info->rotation_matrix,
 			- fdf->screen_info->rotation_speed, axis_y, 0);
